@@ -42,21 +42,21 @@ const STYLE_PROMPTS: Record<string, string> = {
   
   comic: "Vintage comic book style t-shirt design. Bold illustration with thick black ink outlines, flat colors, halftone dot patterns. Dynamic character or subject as focal point. Limited color palette - primary colors plus black. Clean, readable design that works at any size. Isolated subject on simple background. Comic book aesthetic without complex panels or environments.",
   
-  watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
+  watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft pastel watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
   
-  realistic: "Photorealistic t-shirt design with isolated subject. High-detail rendering of main element only. Strong contrast and clear focal point. Subject appears to 'pop' off the shirt. Minimal or removable background. Professional quality suitable for direct-to-garment printing. Focus on one impressive realistic element rather than complex scenes.",
+  realistic: "realistic photograph t-shirt design with isolated subject. High-detailed main element only. Strong contrast and clear focal point. Subject appears to 'pop' off the shirt. Minimal or removable background. Professional quality suitable for direct-to-garment printing. Focus on one impressive realistic element rather than complex scenes.",
   
-  "black-and-white": "High contrast black and white t-shirt design. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). Perfect for single-color screen printing. Clean, striking design that works on any color garment.",
+  "black-and-white": "realistic vintage photograph, highly detailed, sharp focus, dramatic lighting with strong shadows, high contrast, retro aesthetic, centered composition. Perfect for single-color screen printing. Clean, striking design that works on any color garment.",
+
+  "vector-stencil": "High contrast black and white t-shirt design. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). Perfect for single-color screen printing. Clean, striking design that works on any color garment.",
   
-  botanical: "Elegant botanical t-shirt design. Hand-drawn style illustration of plants/flowers as main subject. Clean line work with minimal shading. Scientific illustration aesthetic but simplified for apparel. Centered composition with botanical element as hero. Works well on light or dark garments. No complex backgrounds, focus on botanical beauty.",
+  botanical: "minimalist, elegant t-shirt design with clean thin lines. Hand-drawn botanical illustration style with delicate line work and subtle shading. Scientific illustration style simplified for apparel. Centered composition with botanical element as hero. Works well on light or dark garments. No complex backgrounds, focus on botanical beauty.",
   
   "cartoon-avatar": "Fun cartoon character t-shirt design. Single character with exaggerated features, big personality. Bold outlines, flat colors, minimal shading. Character isolated on simple background. Expressive and memorable design. Works like a logo or mascot on apparel. Clean vector style that scales well.",
   
-  "childrens-book": "Whimsical children's illustration style t-shirt design. Soft, friendly character or scene. Limited pastel color palette. Simple, joyful design that appeals to all ages. Main subject clearly defined. Minimal background elements. Hand-drawn quality but clean enough for printing. Positive, uplifting imagery.",
+  "childrens-book": "Charming Hand-painted watercolor children's book illustration style t-shirt design. warm, earthy palette (soft ochre, muted teal, dust-rose blush), simple rounded shapes, no hard outlines, gentle wet-in-wet shading, visible cold-press paper grain, mid-century storybook vibe, full-body pose, playful and friendly character or scene. Limited pastel color palette. Main subject clearly defined. Minimal background elements. Hand-drawn quality but clean enough for printing. Positive, uplifting imagery.",
   
   grunge: "Edgy grunge t-shirt design. Distressed textures on main graphic element. High contrast - primarily black with accent colors. Raw, rebellious aesthetic. Bold central image with rough edges. Vintage band t-shirt inspired. Works well on black or dark colored shirts. Strong visual impact.",
-  
-  "vintage-comic": "Retro comic book t-shirt design in black and white. Bold ink style illustration. Heavy shadows, dynamic poses. Single powerful image, not a full comic panel. High contrast for impactful design. Works like vintage band merch or retro poster art. Clean composition despite detailed linework."
 };
 
 // T-shirt design technical specifications
