@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Sparkles, Mic, Image, AlertCircle, X } from 'lucide-react';
+import { Sparkles, Mic, Image as ImageIcon, AlertCircle, X } from 'lucide-react';
 import { validatePrompt } from '../utils/imageGeneration';
 import { ga } from '../lib/ga';
 
@@ -116,9 +116,10 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   };
 
   const handleFileSelect = useCallback((file: File) => {
+    console.log('handleFileSelect called with file:', file);
     if (file && file.type.startsWith('image/')) {
       // Resize image before converting to base64 to reduce payload size
-      const img = new Image();
+      const img = new window.Image(); // Use window.Image to avoid conflict
       const reader = new FileReader();
       
       reader.onloadend = () => {
@@ -309,7 +310,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
                     title="Upload reference image"
                   >
-                    <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                    <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
                     <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
                   </button>
                 </div>
@@ -484,7 +485,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
                     title="Upload reference image"
                   >
-                    <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                    <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
                     <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
                   </button>
                 </div>
