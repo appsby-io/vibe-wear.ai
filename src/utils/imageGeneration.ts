@@ -62,7 +62,7 @@ function getBackgroundInstruction(productColor: string): string {
   }
 }
 
-function enhancePrompt(userPrompt: string, style: string, productColor: string, hasReferenceImage: boolean = false, imageAnalysis: string | null = null): string {
+function enhancePrompt(userPrompt: string, style: string, productColor: string, imageAnalysis: string | null = null): string {
   const cleanPrompt = userPrompt.trim()
     .replace(/[^\w\s.,!?'-]/g, '')
     .replace(/\s+/g, ' ');
@@ -131,7 +131,7 @@ export async function generateDesign(
     console.log('Image analysis result:', imageAnalysis);
   }
   
-  const enhancedPrompt = enhancePrompt(prompt, style, productColor, !!referenceImage, imageAnalysis);
+  const enhancedPrompt = enhancePrompt(prompt, style, productColor, imageAnalysis);
   
   try {
     if (!prompt?.trim()) {

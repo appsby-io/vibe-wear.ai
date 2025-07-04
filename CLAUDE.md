@@ -2,10 +2,12 @@
 
 ## Project: vibe-wear - AI Custom Clothing Generation
 
-### Current Status (2024-06-24)
+### Current Status (2025-01-04)
 
-#### Branch: `fixes`
-Latest commit: `3351f35`
+#### Active Branches:
+- `main` - Production branch (deployed to vibe-wear.ai)
+- `test` - Testing branch (auto-deploys to Netlify preview)
+- `fixes` - Legacy development branch
 
 ### OpenAI Model Migration: DALL-E 3 → gpt-image-1
 
@@ -92,3 +94,136 @@ git push origin test  # ALWAYS push to test first
 - Preview deployment URL format: `fixes--yoursite.netlify.app`
 - Check browser console for detailed error logs
 - Check Netlify Functions tab for server-side logs
+
+## Recent Development Timeline (2025-01-04)
+
+### 1. Git Repository Setup & Deployment
+- ✅ Initialized git repository and pushed to GitHub
+- ✅ Created main and test branches
+- ✅ Set up Netlify deployment with automatic deploys from test branch
+- ✅ Established branch protection policy (never push to main directly)
+
+### 2. Production 403 Error Resolution
+- **Issue**: Main branch had 403 errors while test branch worked
+- **Root Cause**: gpt-image-1 model access issues
+- **Solution**: Implemented automatic fallback from gpt-image-1 to DALL-E 3
+- **Additional Fix**: Resolved Image constructor naming conflict (Image → ImageIcon)
+
+### 3. Reference Image Feature Implementation (Currently Disabled)
+
+#### Initial Implementation:
+- ✅ Added drag-and-drop reference image upload
+- ✅ Redesigned UI to match ChatGPT style (image preview inside input field)
+- ✅ Implemented image compression (max 800x800px) to reduce payload size
+- ✅ Added image preview with remove button
+
+#### Style Transfer Attempt:
+- ✅ Created `/netlify/edge-functions/analyzeImage.ts` using GPT-4o-mini
+- ✅ Implemented artistic style extraction (not content description)
+- ✅ Added style analysis to override selected style when reference image present
+- ❌ Results were poor - OpenAI doesn't support true style transfer
+
+#### Feature Toggle:
+- ✅ Added feature flag system in `/src/store/useFeature.ts`
+- ✅ Set `referenceImage: false` to disable the feature
+- ✅ Restored "Coming soon 🦘" tooltip when disabled
+- ✅ Feature can be re-enabled by changing one boolean value
+
+### 4. Key Technical Decisions
+
+#### Model Fallback Strategy:
+```typescript
+// In generateImage.ts
+if (apiRes.status === 403 || apiRes.status === 404) {
+  // Fallback to DALL-E 3 if gpt-image-1 fails
+  requestBody = {
+    model: "dall-e-3",
+    prompt: enhancedPrompt,
+    quality: quality === 'hd' ? 'hd' : 'standard',
+    n: 1,
+    size: "1024x1024"
+  };
+}
+```
+
+#### Feature Toggle System:
+```typescript
+// In useFeature.ts
+features: {
+  betaGate: import.meta.env.VITE_FEATURE_BETA_GATE === 'on',
+  referenceImage: false, // Toggle this to enable/disable
+}
+```
+
+### 5. Current Architecture
+
+#### Edge Functions:
+1. `/netlify/edge-functions/generateImage.ts`
+   - Handles image generation with model fallback
+   - Supports both gpt-image-1 and DALL-E 3
+
+2. `/netlify/edge-functions/analyzeImage.ts`
+   - Analyzes reference images for artistic style
+   - Uses GPT-4o-mini for cost efficiency
+   - Currently unused (feature toggled off)
+
+#### Key Components:
+1. `AIGenerator.tsx` - Main UI component with ChatGPT-style input
+2. `imageGeneration.ts` - Core generation logic and prompt enhancement
+3. `useFeature.ts` - Feature toggle management
+
+### 6. Lessons Learned
+
+#### OpenAI Limitations:
+- No native style transfer support
+- DALL-E 3 cannot accept image inputs
+- GPT-4 Vision can analyze but not generate images
+- Text descriptions of style don't translate well to visual style
+
+#### Alternative Approaches (Not Implemented):
+- Stable Diffusion with ControlNet (requires self-hosting)
+- Midjourney API (no official API available)
+- Fine-tuned models (expensive per style)
+
+### 7. Environment Variables
+
+#### Required in Netlify:
+- `OPENAI_API_KEY_SERVER` - OpenAI API key
+- `VITE_SUPABASE_URL` - Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
+- `VITE_GA_ID` - Google Analytics ID
+
+### 8. Quick Reference Commands
+
+```bash
+# Daily workflow
+git checkout test
+npm run lint        # Always lint before committing
+npm run build       # Verify build succeeds
+git add -A
+git commit -m "Your descriptive message"
+git push origin test
+
+# Re-enable reference image feature
+# Edit src/store/useFeature.ts
+# Change: referenceImage: false → referenceImage: true
+
+# View logs
+# Netlify dashboard → Functions tab → View logs
+```
+
+### 9. Next Steps When Reference Image Feature is Re-enabled
+
+1. Consider adding UI text explaining limitations
+2. Build a library of pre-analyzed styles
+3. Add user feedback mechanism for style matching
+4. Investigate newer models as they become available
+
+### 10. Important Files Reference
+
+- Git policy: `/CLAUDE.md` (this file) - line 65-89
+- Model fallback: `/netlify/edge-functions/generateImage.ts` - line 73-86
+- Feature toggle: `/src/store/useFeature.ts` - line 12
+- Reference image UI: `/src/components/AIGenerator.tsx` - line 34, 119-125, 228-237
+- Style analysis: `/netlify/edge-functions/analyzeImage.ts`
+- Analysis docs: `/REFERENCE_IMAGE_ANALYSIS.md`

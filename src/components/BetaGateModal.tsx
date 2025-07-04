@@ -2,6 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 import { ga } from '../lib/ga';
+import { GOOGLE_FORM_URL } from '../config/waitlist';
 
 interface BetaGateModalProps {
   isOpen: boolean;
@@ -27,10 +28,14 @@ export const BetaGateModal: React.FC<BetaGateModalProps> = ({
     setError(null);
 
     try {
-      const response = await fetch('/api/waitlist', {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const apiUrl = `${supabaseUrl}/functions/v1/waitlist`;
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
           email: email.trim(),
@@ -39,18 +44,23 @@ export const BetaGateModal: React.FC<BetaGateModalProps> = ({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to join waitlist');
+        let errorMessage = 'Failed to join waitlist';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          errorMessage = `Server error (${response.status}). Please try again.`;
+        }
+        throw new Error(errorMessage);
       }
 
+      await response.json();
       setIsSuccess(true);
       ga.trackSignUp('beta_modal');
 
       // Open Google Form in new tab
-      const googleFormUrl = import.meta.env.VITE_GOOGLE_FORM_URL;
-      if (googleFormUrl) {
-        window.open(googleFormUrl, '_blank');
-        ga.trackSurveyOpen();
-      }
+      window.open(GOOGLE_FORM_URL, '_blank');
+      ga.trackSurveyOpen();
 
       // Auto-close after 3 seconds
       setTimeout(() => {
@@ -59,9 +69,9 @@ export const BetaGateModal: React.FC<BetaGateModalProps> = ({
         setEmail('');
       }, 3000);
 
-    } catch (error) {
-      console.error('Error joining waitlist:', error);
-      setError('Failed to join waitlist. Please try again.');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to join waitlist. Please try again.';
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

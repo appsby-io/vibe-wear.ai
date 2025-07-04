@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Sparkles, Mic, Image as ImageIcon, AlertCircle, X } from 'lucide-react';
 import { validatePrompt } from '../utils/imageGeneration';
 import { ga } from '../lib/ga';
+import { useFeature } from '../store/useFeature';
 
 interface AIGeneratorProps {
   onGenerate: (prompt: string, styleOverride?: string, referenceImage?: string) => void;
@@ -28,6 +29,9 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const inputContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Feature toggle for reference image upload
+  const isReferenceImageEnabled = useFeature('referenceImage');
 
   // Auto-resize textarea function
   const adjustTextareaHeight = () => {
@@ -112,7 +116,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
   const handleImageClick = () => {
     ga.trackFeatureClick('image_upload');
-    fileInputRef.current?.click();
+    if (isReferenceImageEnabled) {
+      fileInputRef.current?.click();
+    } else {
+      setShowTooltip('image_upload');
+      setTimeout(() => setShowTooltip(null), 2000);
+    }
   };
 
   const handleFileSelect = useCallback((file: File) => {
@@ -216,27 +225,29 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <form onSubmit={handleSubmit} className="w-full lg:w-[640px] mx-auto">
             {/* Hidden file input */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileInput}
-              className="hidden"
-              disabled={isGenerating}
-            />
+            {isReferenceImageEnabled && (
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileInput}
+                className="hidden"
+                disabled={isGenerating}
+              />
+            )}
             
             {/* Text input area with buttons inside at bottom - same as mobile */}
             <div 
               ref={inputContainerRef}
               className={`relative bg-white rounded-2xl border-2 transition-all ${
-                currentError ? 'border-red-300' : isDragging ? 'border-vibrant-pink bg-pink-50' : 'border-black'
+                currentError ? 'border-red-300' : (isDragging && isReferenceImageEnabled) ? 'border-vibrant-pink bg-pink-50' : 'border-black'
               }`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
+              onDragOver={isReferenceImageEnabled ? handleDragOver : undefined}
+              onDragLeave={isReferenceImageEnabled ? handleDragLeave : undefined}
+              onDrop={isReferenceImageEnabled ? handleDrop : undefined}
             >
               {/* Reference image preview */}
-              {referenceImage && (
+              {isReferenceImageEnabled && referenceImage && (
                 <div className="relative m-3 mb-0">
                   <div className="relative inline-block">
                     <img 
@@ -313,6 +324,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
                     <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
                   </button>
+                  {showTooltip === 'image_upload' && (
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
+                      Coming soon 🦘
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Generate button - right aligned */}
@@ -400,14 +417,14 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
             {/* Text input area with buttons inside at bottom */}
             <div 
               className={`relative bg-white rounded-2xl border-2 transition-all ${
-                currentError ? 'border-red-300' : isDragging ? 'border-vibrant-pink bg-pink-50' : 'border-black'
+                currentError ? 'border-red-300' : (isDragging && isReferenceImageEnabled) ? 'border-vibrant-pink bg-pink-50' : 'border-black'
               }`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
+              onDragOver={isReferenceImageEnabled ? handleDragOver : undefined}
+              onDragLeave={isReferenceImageEnabled ? handleDragLeave : undefined}
+              onDrop={isReferenceImageEnabled ? handleDrop : undefined}
             >
               {/* Reference image preview */}
-              {referenceImage && (
+              {isReferenceImageEnabled && referenceImage && (
                 <div className="relative m-2 mb-0">
                   <div className="relative inline-block">
                     <img 
@@ -488,6 +505,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
                     <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
                   </button>
+                  {showTooltip === 'image_upload' && (
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
+                      Coming soon 🦘
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Generate button - right aligned */}
