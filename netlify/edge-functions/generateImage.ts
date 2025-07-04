@@ -23,7 +23,24 @@ export default async (req: Request) => {
 
   try {
     // Read the request JSON
-    const { prompt, quality = 'standard', size = '1024x1024', referenceImage } = await req.json();
+    let requestData;
+    try {
+      requestData = await req.json();
+    } catch (e) {
+      console.error('Failed to parse request body:', e);
+      return new Response(
+        JSON.stringify({ error: 'Invalid request body' }),
+        { 
+          status: 400,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      );
+    }
+    
+    const { prompt, quality = 'standard', size = '1024x1024', referenceImage } = requestData;
 
     if (!prompt) {
       return new Response(
@@ -58,6 +75,7 @@ export default async (req: Request) => {
     if (referenceImage) {
       // Note: Current OpenAI models don't support direct image input
       // We'll enhance the prompt to mention the reference
+      console.log('Reference image provided, size:', referenceImage.length);
       enhancedPrompt = `${prompt}. (User has provided a reference image for style/motif guidance)`;
     }
     

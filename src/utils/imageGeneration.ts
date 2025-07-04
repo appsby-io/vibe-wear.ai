@@ -62,15 +62,16 @@ function getBackgroundInstruction(productColor: string): string {
   }
 }
 
-function enhancePrompt(userPrompt: string, style: string, productColor: string): string {
+function enhancePrompt(userPrompt: string, style: string, productColor: string, hasReferenceImage: boolean = false): string {
   const cleanPrompt = userPrompt.trim()
     .replace(/[^\w\s.,!?'-]/g, '')
     .replace(/\s+/g, ' ');
 
   const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.realistic;
   const backgroundInstruction = getBackgroundInstruction(productColor);
+  const referenceNote = hasReferenceImage ? ' (Consider the user\'s reference image for style/motif guidance)' : '';
 
-  return `${cleanPrompt}. Style: ${stylePrompt}. Background: ${backgroundInstruction}. Technical: ${technicalSpecs}. Content: ${contentGuidelines}`;
+  return `${cleanPrompt}${referenceNote}. Style: ${stylePrompt}. Background: ${backgroundInstruction}. Technical: ${technicalSpecs}. Content: ${contentGuidelines}`;
 }
 
 interface GenerationResult {
@@ -89,7 +90,7 @@ export async function generateDesign(
   quality: 'low' | 'hd' = 'low',
   referenceImage?: string
 ): Promise<GenerationResult> {
-  const enhancedPrompt = enhancePrompt(prompt, style, productColor);
+  const enhancedPrompt = enhancePrompt(prompt, style, productColor, !!referenceImage);
   
   try {
     if (!prompt?.trim()) {
@@ -120,8 +121,9 @@ export async function generateDesign(
       body: JSON.stringify({
         prompt: enhancedPrompt,
         quality: quality === 'hd' ? 'hd' : 'standard',
-        size: "1024x1024",
-        referenceImage
+        size: "1024x1024"
+        // Note: Not sending referenceImage to avoid payload size issues
+        // OpenAI doesn't support reference images anyway
       })
     });
 
@@ -130,29 +132,34 @@ export async function generateDesign(
       let errorDetails = '';
       
       try {
-        const errorData = await response.json();
-        errorDetails = errorData.details || '';
-        
-        // Provide more specific error messages
-        if (errorData.error?.includes('API key not configured')) {
-          errorMessage = 'Image generation service is not configured. Please contact support.';
-        } else if (errorData.error?.includes('model_not_found') || errorData.error?.includes('gpt-image-1')) {
-          errorMessage = 'The requested image model (gpt-image-1) is not available. You may need to apply for access or use dall-e-3 instead.';
-        } else if (response.status === 429) {
-          errorMessage = 'Too many requests. Please wait a moment and try again.';
-        } else if (response.status === 401 || response.status === 403) {
-          errorMessage = 'Authentication failed. Please check your API access.';
-        } else if (errorData.error) {
-          // Show the actual error from the API
-          errorMessage = errorData.error;
+        const responseText = await response.text();
+        try {
+          const errorData = JSON.parse(responseText);
+          errorDetails = errorData.details || '';
+          
+          // Provide more specific error messages
+          if (errorData.error?.includes('API key not configured')) {
+            errorMessage = 'Image generation service is not configured. Please contact support.';
+          } else if (errorData.error?.includes('model_not_found') || errorData.error?.includes('gpt-image-1')) {
+            errorMessage = 'The requested image model (gpt-image-1) is not available. You may need to apply for access or use dall-e-3 instead.';
+          } else if (response.status === 429) {
+            errorMessage = 'Too many requests. Please wait a moment and try again.';
+          } else if (response.status === 401 || response.status === 403) {
+            errorMessage = 'Authentication failed. Please check your API access.';
+          } else if (errorData.error) {
+            // Show the actual error from the API
+            errorMessage = errorData.error;
+          }
+          
+          console.error('Netlify function error:', errorData);
+          console.error('Error details:', errorDetails);
+        } catch {
+          // Response wasn't JSON
+          console.error('Netlify function error (text):', responseText);
+          errorDetails = responseText;
         }
-        
-        console.error('Netlify function error:', errorData);
-        console.error('Error details:', errorDetails);
-      } catch {
-        // If response isn't JSON, try to parse as text
-        const errorText = await response.text();
-        console.error('Netlify function error (text):', errorText);
+      } catch (e) {
+        console.error('Failed to read error response:', e);
       }
       
       await logPromptToDatabase({

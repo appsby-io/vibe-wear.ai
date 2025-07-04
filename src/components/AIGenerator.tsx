@@ -117,10 +117,45 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
   const handleFileSelect = useCallback((file: File) => {
     if (file && file.type.startsWith('image/')) {
+      // Resize image before converting to base64 to reduce payload size
+      const img = new Image();
       const reader = new FileReader();
+      
       reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setReferenceImage(base64String);
+        img.src = reader.result as string;
+        img.onload = () => {
+          // Create canvas to resize image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Set max dimensions
+          const maxWidth = 800;
+          const maxHeight = 800;
+          let width = img.width;
+          let height = img.height;
+          
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height;
+              height = maxHeight;
+            }
+          }
+          
+          // Resize the image
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Convert to base64 with compression
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          setReferenceImage(compressedBase64);
+        };
       };
       reader.readAsDataURL(file);
     }
