@@ -62,6 +62,32 @@ git commit -m "Your commit message"
 git push origin fixes
 ```
 
+## IMPORTANT: Git Branch Policy
+
+**NEVER push directly to the main/production branch!**
+
+- All changes should be pushed to the `test` branch first
+- Only push to `main` when explicitly requested by the user
+- Default workflow:
+  1. Make changes on test branch
+  2. Push to test branch
+  3. Test on test deployment
+  4. Only merge/push to main when user explicitly says "push to production" or similar
+
+```bash
+# Default workflow
+git checkout test
+# ... make changes ...
+git add -A
+git commit -m "Your changes"
+git push origin test  # ALWAYS push to test first
+
+# Only when explicitly requested:
+# git checkout main
+# git merge test
+# git push origin main
+```
+
 ### Testing Notes:
 - Preview deployment URL format: `fixes--yoursite.netlify.app`
 - Check browser console for detailed error logs

@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, Mic, Image, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Sparkles, Mic, Image, AlertCircle, X } from 'lucide-react';
 import { validatePrompt } from '../utils/imageGeneration';
 import { ga } from '../lib/ga';
-import { ReferenceImageUpload } from './ReferenceImageUpload';
 
 interface AIGeneratorProps {
   onGenerate: (prompt: string, styleOverride?: string, referenceImage?: string) => void;
@@ -24,9 +23,11 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
-  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-resize textarea function
   const adjustTextareaHeight = () => {
@@ -111,15 +112,60 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
   const handleImageClick = () => {
     ga.trackFeatureClick('image_upload');
-    setShowImageUpload(!showImageUpload);
+    fileInputRef.current?.click();
   };
 
-  const handleReferenceImageSelect = (image: string | null) => {
-    setReferenceImage(image);
-    if (!image) {
-      setShowImageUpload(false);
+  const handleFileSelect = useCallback((file: File) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setReferenceImage(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  }, []);
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileSelect(files[0]);
     }
   };
+
+  const removeImage = () => {
+    setReferenceImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only set isDragging to false if we're leaving the container
+    if (e.currentTarget === e.target) {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileSelect(files[0]);
+    }
+  }, [handleFileSelect]);
 
 
   const currentError = validationError || error;
@@ -133,12 +179,49 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
       <div className="hidden lg:block bg-white border-b border-gray-100 pt-8 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <form onSubmit={handleSubmit} className="w-full lg:w-[640px] mx-auto">
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileInput}
+              className="hidden"
+              disabled={isGenerating}
+            />
+            
             {/* Text input area with buttons inside at bottom - same as mobile */}
-            <div className={`relative bg-white rounded-2xl border-2 transition-all ${
-              currentError ? 'border-red-300' : 'border-black'
-            }`}>
-              {/* Enhanced watermark text - only show when empty */}
-              {!prompt && (
+            <div 
+              ref={inputContainerRef}
+              className={`relative bg-white rounded-2xl border-2 transition-all ${
+                currentError ? 'border-red-300' : isDragging ? 'border-vibrant-pink bg-pink-50' : 'border-black'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {/* Reference image preview */}
+              {referenceImage && (
+                <div className="relative m-3 mb-0">
+                  <div className="relative inline-block">
+                    <img 
+                      src={referenceImage} 
+                      alt="Reference" 
+                      className="h-20 w-auto rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      disabled={isGenerating}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-gray-700 hover:bg-gray-800 rounded-full flex items-center justify-center transition-colors disabled:opacity-50"
+                    >
+                      <X className="h-4 w-4 text-white" />
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Enhanced watermark text - only show when empty and no image */}
+              {!prompt && !referenceImage && (
                 <div className="absolute top-4 left-4 text-gray-400 text-sm font-source-sans pointer-events-none z-10">
                   Try: "Majestic lion wearing a crown with golden mane"
                 </div>
@@ -150,7 +233,9 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                 value={prompt}
                 onChange={handlePromptChange}
                 placeholder=""
-                className="w-full px-4 pt-4 pb-16 bg-transparent text-base placeholder-gray-500 focus:outline-none resize-none font-source-sans leading-relaxed"
+                className={`w-full px-4 pb-16 bg-transparent text-base placeholder-gray-500 focus:outline-none resize-none font-source-sans leading-relaxed ${
+                  referenceImage ? 'pt-2' : 'pt-4'
+                }`}
                 disabled={isGenerating}
                 rows={1}
                 maxLength={1000}
@@ -183,22 +268,15 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  {referenceImage ? (
-                    <ReferenceImageUpload 
-                      onImageSelect={handleReferenceImageSelect}
-                      isGenerating={isGenerating}
-                    />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleImageClick}
-                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
-                      title="Upload reference image"
-                    >
-                      <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
-                      <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={handleImageClick}
+                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
+                    title="Upload reference image"
+                  >
+                    <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                    <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
+                  </button>
                 </div>
 
                 {/* Generate button - right aligned */}
@@ -227,16 +305,6 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                 </button>
               </div>
             </div>
-            
-            {/* Reference image upload area - Desktop */}
-            {showImageUpload && !referenceImage && (
-              <div className="mt-4">
-                <ReferenceImageUpload 
-                  onImageSelect={handleReferenceImageSelect}
-                  isGenerating={isGenerating}
-                />
-              </div>
-            )}
             
             {/* Enhanced error display */}
             {currentError && (
@@ -294,11 +362,37 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
         <div className="px-4 py-3">
           <form onSubmit={handleSubmit}>
             {/* Text input area with buttons inside at bottom */}
-            <div className={`relative bg-white rounded-2xl border-2 transition-all ${
-              currentError ? 'border-red-300' : 'border-black'
-            }`}>
-              {/* Enhanced watermark text - only show when empty */}
-              {!prompt && (
+            <div 
+              className={`relative bg-white rounded-2xl border-2 transition-all ${
+                currentError ? 'border-red-300' : isDragging ? 'border-vibrant-pink bg-pink-50' : 'border-black'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {/* Reference image preview */}
+              {referenceImage && (
+                <div className="relative m-2 mb-0">
+                  <div className="relative inline-block">
+                    <img 
+                      src={referenceImage} 
+                      alt="Reference" 
+                      className="h-16 w-auto rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      disabled={isGenerating}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-gray-700 hover:bg-gray-800 rounded-full flex items-center justify-center transition-colors disabled:opacity-50"
+                    >
+                      <X className="h-3 w-3 text-white" />
+                    </button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Enhanced watermark text - only show when empty and no image */}
+              {!prompt && !referenceImage && (
                 <div className="absolute top-3 left-4 text-gray-400 text-sm font-source-sans pointer-events-none">
                   Try: "Majestic lion wearing a crown with golden mane"
                 </div>
@@ -309,7 +403,9 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                 value={prompt}
                 onChange={handlePromptChange}
                 placeholder=""
-                className="w-full px-4 pt-3 pb-12 bg-transparent text-base placeholder-gray-500 focus:outline-none resize-none font-source-sans"
+                className={`w-full px-4 pb-12 bg-transparent text-base placeholder-gray-500 focus:outline-none resize-none font-source-sans ${
+                  referenceImage ? 'pt-1' : 'pt-3'
+                }`}
                 disabled={isGenerating}
                 rows={1}
                 maxLength={1000}
@@ -347,22 +443,15 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  {referenceImage ? (
-                    <ReferenceImageUpload 
-                      onImageSelect={handleReferenceImageSelect}
-                      isGenerating={isGenerating}
-                    />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleImageClick}
-                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
-                      title="Upload reference image"
-                    >
-                      <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
-                      <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={handleImageClick}
+                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
+                    title="Upload reference image"
+                  >
+                    <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                    <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
+                  </button>
                 </div>
 
                 {/* Generate button - right aligned */}
