@@ -5,6 +5,7 @@ import { LottieAnimation } from './LottieAnimation';
 import successAnimationData from '../assets/success.json';
 import KangarooImage from '../assets/cangaroo-hammock.jpg';
 import { ga } from '../lib/ga';
+import { GOOGLE_FORM_URL } from '../config/waitlist';
 
 interface WaitlistModalProps {
   isOpen: boolean;
@@ -79,8 +80,8 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
       setIsSuccess(true);
       ga.trackSignUp('beta_modal');
 
-      // Open Google Form in new tab with the provided URL
-      window.open('https://forms.gle/NmbwymLmcKV2w1bz8', '_blank');
+      // Open Google Form in new tab
+      window.open(GOOGLE_FORM_URL, '_blank');
       ga.trackSurveyOpen();
 
       // Don't auto-close - stay on success screen
@@ -94,7 +95,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
   };
 
   const handleSurveyClick = () => {
-    window.open('https://forms.gle/NmbwymLmcKV2w1bz8', '_blank');
+    window.open(GOOGLE_FORM_URL, '_blank');
     ga.trackSurveyOpen();
   };
 

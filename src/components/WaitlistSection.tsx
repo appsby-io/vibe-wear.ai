@@ -3,6 +3,7 @@ import { LottieAnimation } from './LottieAnimation';
 import KangarooImage from '../assets/cangaroo-hammock.jpg';
 import successAnimationData from '../assets/success.json';
 import { ga } from '../lib/ga';
+import { GOOGLE_FORM_URL } from '../config/waitlist';
 
 export const WaitlistSection: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -62,6 +63,10 @@ export const WaitlistSection: React.FC = () => {
       setEmail('');
       ga.trackSignUp('waitlist_section');
 
+      // Open Google Form in new tab
+      window.open(GOOGLE_FORM_URL, '_blank');
+      ga.trackSurveyOpen();
+
       // Reset success state after 5 seconds
       setTimeout(() => {
         setIsSuccess(false);
@@ -76,7 +81,7 @@ export const WaitlistSection: React.FC = () => {
   };
 
   const handleSurveyClick = () => {
-    window.open('https://forms.gle/NmbwymLmcKV2w1bz8', '_blank');
+    window.open(GOOGLE_FORM_URL, '_blank');
     ga.trackSurveyOpen();
   };
 

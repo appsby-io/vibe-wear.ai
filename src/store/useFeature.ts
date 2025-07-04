@@ -9,6 +9,7 @@ interface FeatureState {
 const useFeatureStore = create<FeatureState>((set, get) => ({
   features: {
     betaGate: import.meta.env.VITE_FEATURE_BETA_GATE === 'on',
+    referenceImage: false, // Feature toggle for reference image upload
   },
   setFeature: (key: string, value: boolean) =>
     set((state) => ({
