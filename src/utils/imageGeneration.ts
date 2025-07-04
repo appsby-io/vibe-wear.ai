@@ -1,5 +1,5 @@
 // src/utils/imageGeneration.ts
-import { logPromptToDatabase } from './promptLogger';
+// import { logPromptToDatabase } from './promptLogger'; // Temporarily disabled
 
 // Validation function for prompts
 export function validatePrompt(prompt: string): { valid: boolean; error?: string } {
@@ -62,16 +62,24 @@ function getBackgroundInstruction(productColor: string): string {
   }
 }
 
-function enhancePrompt(userPrompt: string, style: string, productColor: string, hasReferenceImage: boolean = false): string {
+function enhancePrompt(userPrompt: string, style: string, productColor: string, hasReferenceImage: boolean = false, imageAnalysis: string | null = null): string {
   const cleanPrompt = userPrompt.trim()
     .replace(/[^\w\s.,!?'-]/g, '')
     .replace(/\s+/g, ' ');
 
   const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.realistic;
   const backgroundInstruction = getBackgroundInstruction(productColor);
-  const referenceNote = hasReferenceImage ? ' (Consider the user\'s reference image for style/motif guidance)' : '';
+  
+  // If we have image analysis, incorporate it into the prompt
+  let referenceStyleGuide = '';
+  if (imageAnalysis) {
+    referenceStyleGuide = `. Reference style: ${imageAnalysis}`;
+  } else if (hasReferenceImage) {
+    // Fallback if analysis failed but image was provided
+    referenceStyleGuide = '. (Consider the user\'s reference image for style/motif guidance)';
+  }
 
-  return `${cleanPrompt}${referenceNote}. Style: ${stylePrompt}. Background: ${backgroundInstruction}. Technical: ${technicalSpecs}. Content: ${contentGuidelines}`;
+  return `${cleanPrompt}${referenceStyleGuide}. Style: ${stylePrompt}. Background: ${backgroundInstruction}. Technical: ${technicalSpecs}. Content: ${contentGuidelines}`;
 }
 
 interface GenerationResult {
@@ -83,6 +91,32 @@ interface GenerationResult {
   error?: string;
 }
 
+async function analyzeReferenceImage(image: string, userPrompt: string): Promise<string | null> {
+  try {
+    const response = await fetch('/.netlify/edge-functions/analyzeImage', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        image,
+        userPrompt
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Failed to analyze reference image');
+      return null;
+    }
+
+    const data = await response.json();
+    return data.description;
+  } catch (error) {
+    console.error('Error analyzing reference image:', error);
+    return null;
+  }
+}
+
 export async function generateDesign(
   prompt: string,
   style: string,
@@ -90,19 +124,29 @@ export async function generateDesign(
   quality: 'low' | 'hd' = 'low',
   referenceImage?: string
 ): Promise<GenerationResult> {
-  const enhancedPrompt = enhancePrompt(prompt, style, productColor, !!referenceImage);
+  let imageAnalysis: string | null = null;
+  
+  // If reference image provided, analyze it first
+  if (referenceImage) {
+    console.log('Analyzing reference image...');
+    imageAnalysis = await analyzeReferenceImage(referenceImage, prompt);
+    console.log('Image analysis result:', imageAnalysis);
+  }
+  
+  const enhancedPrompt = enhancePrompt(prompt, style, productColor, !!referenceImage, imageAnalysis);
   
   try {
     if (!prompt?.trim()) {
-      await logPromptToDatabase({
-        originalPrompt: prompt,
-        enhancedPrompt,
-        style,
-        productColor,
-        quality,
-        success: false,
-        errorMessage: 'Empty prompt provided'
-      });
+      // Temporarily disable logging to avoid 401 errors
+      // await logPromptToDatabase({
+      //   originalPrompt: prompt,
+      //   enhancedPrompt,
+      //   style,
+      //   productColor,
+      //   quality,
+      //   success: false,
+      //   errorMessage: 'Empty prompt provided'
+      // });
 
       return {
         success: false,
@@ -162,7 +206,8 @@ export async function generateDesign(
         console.error('Failed to read error response:', e);
       }
       
-      await logPromptToDatabase({
+      // Temporarily disable logging to avoid 401 errors
+      /* await logPromptToDatabase({
         originalPrompt: prompt,
         enhancedPrompt,
         style,
@@ -170,7 +215,7 @@ export async function generateDesign(
         quality,
         success: false,
         errorMessage: `API Error: ${response.status} - ${errorDetails}`
-      });
+      }); */
 
       return {
         success: false,
@@ -196,7 +241,8 @@ export async function generateDesign(
     
     if (!imageUrl) {
       console.error('No image URL found in response:', data);
-      await logPromptToDatabase({
+      // Temporarily disable logging to avoid 401 errors
+      /* await logPromptToDatabase({
         originalPrompt: prompt,
         enhancedPrompt,
         style,
@@ -204,7 +250,7 @@ export async function generateDesign(
         quality,
         success: false,
         errorMessage: 'No image was generated'
-      });
+      }); */
 
       return {
         success: false,
@@ -213,7 +259,7 @@ export async function generateDesign(
     }
 
     // Log successful generation
-    await logPromptToDatabase({
+    /* await logPromptToDatabase({
       originalPrompt: prompt,
       enhancedPrompt,
       revisedPrompt: data.data?.[0]?.revised_prompt,
@@ -222,7 +268,7 @@ export async function generateDesign(
       quality,
       success: true,
       imageUrl
-    });
+    }); */
 
     return {
       success: true,
@@ -235,10 +281,10 @@ export async function generateDesign(
   } catch (error: unknown) {
     console.error('Image generation error:', error);
 
-    const errorMessage = error instanceof Error ? error.message : 'AI image generation is currently unavailable';
+    // const errorMessage = error instanceof Error ? error.message : 'AI image generation is currently unavailable';
 
     // Log failed generation
-    await logPromptToDatabase({
+    /* await logPromptToDatabase({
       originalPrompt: prompt,
       enhancedPrompt,
       style,
@@ -246,7 +292,7 @@ export async function generateDesign(
       quality,
       success: false,
       errorMessage
-    });
+    }); */
 
     return {
       success: false,
