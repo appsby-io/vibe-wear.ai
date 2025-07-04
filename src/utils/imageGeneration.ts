@@ -44,7 +44,7 @@ const STYLE_PROMPTS: Record<string, string> = {
   
   watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft pastel watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
   
-  realistic: "realistic photograph t-shirt design with isolated subject. High-detailed main element only. Strong contrast and clear focal point. Subject appears to 'pop' off the shirt. Minimal or removable background. Professional quality suitable for direct-to-garment printing. Focus on one impressive realistic element rather than complex scenes.",
+  realistic: "Photorealistic illustration of the subject only, highly detailed and lifelike. Isolated main element with studio lighting. Sharp focus, professional photography style. Subject on clean, minimal background for easy removal. High contrast and vibrant colors. No t-shirt mockup, just the design element itself. Professional quality suitable for direct-to-garment printing.",
   
   "black-and-white": "realistic vintage photograph, highly detailed, sharp focus, dramatic lighting with strong shadows, high contrast, retro aesthetic, centered composition. Perfect for single-color screen printing. Clean, striking design that works on any color garment.",
 
