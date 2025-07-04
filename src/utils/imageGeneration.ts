@@ -67,19 +67,17 @@ function enhancePrompt(userPrompt: string, style: string, productColor: string, 
     .replace(/[^\w\s.,!?'-]/g, '')
     .replace(/\s+/g, ' ');
 
-  const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.realistic;
   const backgroundInstruction = getBackgroundInstruction(productColor);
   
-  // If we have image analysis, incorporate it into the prompt
-  let referenceStyleGuide = '';
+  // If we have image analysis, use it as the primary style guide
   if (imageAnalysis) {
-    referenceStyleGuide = `. Reference style: ${imageAnalysis}`;
-  } else if (hasReferenceImage) {
-    // Fallback if analysis failed but image was provided
-    referenceStyleGuide = '. (Consider the user\'s reference image for style/motif guidance)';
+    // When we have a reference image analysis, prioritize it over the selected style
+    return `${cleanPrompt}. Artistic style: ${imageAnalysis}. Background: ${backgroundInstruction}. Technical: ${technicalSpecs}. Content: ${contentGuidelines}`;
+  } else {
+    // Use the selected style when no reference image
+    const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.realistic;
+    return `${cleanPrompt}. Style: ${stylePrompt}. Background: ${backgroundInstruction}. Technical: ${technicalSpecs}. Content: ${contentGuidelines}`;
   }
-
-  return `${cleanPrompt}${referenceStyleGuide}. Style: ${stylePrompt}. Background: ${backgroundInstruction}. Technical: ${technicalSpecs}. Content: ${contentGuidelines}`;
 }
 
 interface GenerationResult {

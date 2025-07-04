@@ -6,6 +6,10 @@
   path = "/.netlify/edge-functions/generateImage"
   function = "generateImage"
 
+[[edge_functions]]
+  path = "/.netlify/edge-functions/analyzeImage"
+  function = "analyzeImage"
+
 [build.environment]
   NODE_VERSION = "18"
 

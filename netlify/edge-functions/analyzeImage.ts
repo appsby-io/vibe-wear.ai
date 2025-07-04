@@ -64,20 +64,33 @@ export default async (req: Request) => {
         messages: [
           {
             role: "system",
-            content: "You are an expert at analyzing images for use as style references in AI image generation. Describe the visual style, colors, composition, artistic technique, and any distinctive motifs or elements that should be replicated."
+            content: "You are an expert at analyzing visual art styles for AI image generation. Your goal is to extract the ARTISTIC STYLE, not the content. Focus on HOW things are drawn/painted, not WHAT is shown."
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Analyze this reference image and describe its visual style, artistic technique, color palette, and key motifs that could be used to generate a similar styled image. The user wants to create: "${userPrompt}". Focus on style elements that would be relevant for this generation.`
+                text: `Analyze this reference image and create a detailed style guide for AI image generation. The user wants to create: "${userPrompt}" in this exact artistic style.
+
+Focus ONLY on style elements:
+1. Art medium/technique (e.g., watercolor, oil painting, digital art, pencil sketch)
+2. Artistic style movement (e.g., impressionism, pop art, anime, photorealism)
+3. Color treatment (vibrant/muted, color harmony, saturation levels)
+4. Brushwork/line quality (smooth, textured, bold, delicate)
+5. Lighting style (dramatic, soft, flat, chiaroscuro)
+6. Level of detail and stylization
+7. Any unique artistic characteristics
+
+DO NOT describe what objects are in the image. We only care about HOW they are rendered artistically.
+
+Format your response as a concise artistic style description that can be used directly in an image generation prompt.`
               },
               {
                 type: "image_url",
                 image_url: {
                   url: image,
-                  detail: "low" // Use low detail to reduce tokens
+                  detail: "high" // Use high detail for better style analysis
                 }
               }
             ]
