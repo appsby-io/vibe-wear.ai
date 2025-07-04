@@ -23,7 +23,7 @@ export default async (req: Request) => {
 
   try {
     // Read the request JSON
-    const { prompt, quality = 'standard', size = '1024x1024' } = await req.json();
+    const { prompt, quality = 'standard', size = '1024x1024', referenceImage } = await req.json();
 
     if (!prompt) {
       return new Response(
@@ -53,18 +53,26 @@ export default async (req: Request) => {
       );
     }
 
-    // Call OpenAI Images API (gpt-image-1)
-    const requestBody = {
+    // If reference image is provided, enhance the prompt
+    let enhancedPrompt = prompt;
+    if (referenceImage) {
+      // Note: Current OpenAI models don't support direct image input
+      // We'll enhance the prompt to mention the reference
+      enhancedPrompt = `${prompt}. (User has provided a reference image for style/motif guidance)`;
+    }
+    
+    // Try gpt-image-1 first, fallback to dall-e-3 if needed
+    let requestBody: Record<string, unknown> = {
       model: "gpt-image-1",
-      prompt,
+      prompt: enhancedPrompt,
       quality: quality === 'hd' ? 'high' : 'medium',
       n: 1,
       size
     };
     
-    console.log('Request to OpenAI:', requestBody);
+    console.log('Trying gpt-image-1:', requestBody);
     
-    const apiRes = await fetch("https://api.openai.com/v1/images/generations", {
+    let apiRes = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -73,11 +81,33 @@ export default async (req: Request) => {
       body: JSON.stringify(requestBody)
     });
 
+    // If gpt-image-1 fails with 403/404, try DALL-E 3
+    if (apiRes.status === 403 || apiRes.status === 404) {
+      console.log('gpt-image-1 failed with', apiRes.status, ', falling back to dall-e-3');
+      
+      requestBody = {
+        model: "dall-e-3",
+        prompt: enhancedPrompt,
+        quality: quality === 'hd' ? 'hd' : 'standard',
+        n: 1,
+        size: "1024x1024" // DALL-E 3 is strict about sizes
+      };
+      
+      apiRes = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+      });
+    }
+
     if (!apiRes.ok) {
       let errorDetails = {};
       try {
         errorDetails = await apiRes.json();
-      } catch (e) {
+      } catch {
         const errorText = await apiRes.text();
         errorDetails = { message: errorText };
       }

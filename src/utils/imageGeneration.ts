@@ -86,7 +86,8 @@ export async function generateDesign(
   prompt: string,
   style: string,
   productColor: string,
-  quality: 'low' | 'hd' = 'low'
+  quality: 'low' | 'hd' = 'low',
+  referenceImage?: string
 ): Promise<GenerationResult> {
   const enhancedPrompt = enhancePrompt(prompt, style, productColor);
   
@@ -119,7 +120,8 @@ export async function generateDesign(
       body: JSON.stringify({
         prompt: enhancedPrompt,
         quality: quality === 'hd' ? 'hd' : 'standard',
-        size: "1024x1024"
+        size: "1024x1024",
+        referenceImage
       })
     });
 
@@ -147,7 +149,7 @@ export async function generateDesign(
         
         console.error('Netlify function error:', errorData);
         console.error('Error details:', errorDetails);
-      } catch (e) {
+      } catch {
         // If response isn't JSON, try to parse as text
         const errorText = await response.text();
         console.error('Netlify function error (text):', errorText);
@@ -249,7 +251,8 @@ export async function generateDesign(
 export async function generateHDDesignForCheckout(
   prompt: string,
   style: string,
-  productColor: string
+  productColor: string,
+  referenceImage?: string
 ): Promise<GenerationResult> {
-  return generateDesign(prompt, style, productColor, 'hd');
+  return generateDesign(prompt, style, productColor, 'hd', referenceImage);
 }

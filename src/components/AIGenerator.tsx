@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles, Mic, Image, AlertCircle } from 'lucide-react';
 import { validatePrompt } from '../utils/imageGeneration';
 import { ga } from '../lib/ga';
+import { ReferenceImageUpload } from './ReferenceImageUpload';
 
 interface AIGeneratorProps {
-  onGenerate: (prompt: string, styleOverride?: string) => void;
+  onGenerate: (prompt: string, styleOverride?: string, referenceImage?: string) => void;
   isGenerating: boolean;
   selectedStyle?: string | null;
   canGenerate: boolean;
@@ -22,6 +23,8 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [showImageUpload, setShowImageUpload] = useState(false);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -80,7 +83,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
       });
       
       // Start generation immediately without delay
-      await onGenerate(prompt.trim(), selectedStyle || undefined);
+      await onGenerate(prompt.trim(), selectedStyle || undefined, referenceImage || undefined);
       
     } catch (error) {
       console.error('Generation error:', error);
@@ -108,8 +111,14 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
 
   const handleImageClick = () => {
     ga.trackFeatureClick('image_upload');
-    setShowTooltip('image_upload');
-    setTimeout(() => setShowTooltip(null), 2000);
+    setShowImageUpload(!showImageUpload);
+  };
+
+  const handleReferenceImageSelect = (image: string | null) => {
+    setReferenceImage(image);
+    if (!image) {
+      setShowImageUpload(false);
+    }
   };
 
 
@@ -174,7 +183,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  <div className="relative">
+                  {referenceImage ? (
+                    <ReferenceImageUpload 
+                      onImageSelect={handleReferenceImageSelect}
+                      isGenerating={isGenerating}
+                    />
+                  ) : (
                     <button
                       type="button"
                       onClick={handleImageClick}
@@ -184,13 +198,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                       <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
                       <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
                     </button>
-                    {showTooltip === 'image_upload' && (
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                        Coming soon 🦘
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
                 {/* Generate button - right aligned */}
@@ -219,6 +227,16 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                 </button>
               </div>
             </div>
+            
+            {/* Reference image upload area - Desktop */}
+            {showImageUpload && !referenceImage && (
+              <div className="mt-4">
+                <ReferenceImageUpload 
+                  onImageSelect={handleReferenceImageSelect}
+                  isGenerating={isGenerating}
+                />
+              </div>
+            )}
             
             {/* Enhanced error display */}
             {currentError && (
@@ -329,7 +347,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  <div className="relative">
+                  {referenceImage ? (
+                    <ReferenceImageUpload 
+                      onImageSelect={handleReferenceImageSelect}
+                      isGenerating={isGenerating}
+                    />
+                  ) : (
                     <button
                       type="button"
                       onClick={handleImageClick}
@@ -339,13 +362,7 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                       <Image className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
                       <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
                     </button>
-                    {showTooltip === 'image_upload' && (
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                        Coming soon 🦘
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
                 {/* Generate button - right aligned */}

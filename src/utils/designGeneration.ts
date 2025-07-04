@@ -10,7 +10,8 @@ export const handleDesignGeneration = async (
   setGenerationError: (value: string | null) => void,
   setLastPrompt: (value: string) => void,
   setDesigns: React.Dispatch<React.SetStateAction<Design[]>>,
-  designs: Design[]
+  designs: Design[],
+  referenceImage?: string
 ): Promise<number> => {
   setIsGenerating(true);
   setGenerationError(null);
@@ -18,7 +19,7 @@ export const handleDesignGeneration = async (
   
   try {
     const styleToUse = styleOverride || selectedStyle || 'realistic';
-    const result = await generateDesign(prompt, styleToUse, productConfig.color, 'low');
+    const result = await generateDesign(prompt, styleToUse, productConfig.color, 'low', referenceImage);
     
     if (result.success) {
       const newDesign: Design = {

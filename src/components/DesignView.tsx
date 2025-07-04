@@ -15,7 +15,7 @@ interface DesignViewProps {
   isGenerating: boolean;
   lastPrompt: string;
   selectedStyle: string | null;
-  onGenerate: (prompt: string, styleOverride?: string) => void;
+  onGenerate: (prompt: string, styleOverride?: string, referenceImage?: string) => void;
   onStyleSelect: (styleId: string) => void;
   onImageViewLarge?: () => void;
   canGenerate: boolean;

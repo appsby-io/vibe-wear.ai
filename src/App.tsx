@@ -93,7 +93,7 @@ function App() {
   };
 
 
-  const handleGenerate = async (prompt: string, styleOverride?: string, referenceImage?: File) => {
+  const handleGenerate = async (prompt: string, styleOverride?: string, referenceImage?: string) => {
     // Check if user can still generate
     if (!canGenerate()) {
       setShowWaitlistModal(true);
