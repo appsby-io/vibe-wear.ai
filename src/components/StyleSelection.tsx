@@ -8,7 +8,7 @@ import StyleCartoonAvatar from '../assets/style_cartoon_avatar.jpg';
 import StyleChildrensBook from '../assets/style_childrens_book.jpg';
 import StyleGrunge from '../assets/style_grunge.jpg';
 import StyleRealistic from '../assets/style_realistic.jpg';
-import StyleVintageComic from '../assets/style_vintage_comic.jpg';
+import StyleStencil from '../assets/style_stencil.jpg';
 
 interface Style {
   id: string;
@@ -27,7 +27,7 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
   onStyleSelect,
 }) => {
   const styles: Style[] = [
-    // Row 1: Realistic, Black & White, Cyberpunk, Grunge, Vintage Comic
+    // Row 1: Realistic, Black & White, Cyberpunk, Grunge, Vector Stencil
     {
       id: 'realistic',
       name: 'Realistic',
@@ -53,10 +53,10 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       previewUrl: StyleGrunge,
     },
     {
-      id: 'vintage-comic',
-      name: 'Vintage Comic',
-      description: 'Classic black & white comic',
-      previewUrl: StyleVintageComic,
+      id: 'vector-stencil',
+      name: 'Vector Stencil',
+      description: 'High contrast stencil art',
+      previewUrl: StyleStencil,
     },
     // Row 2: Comic, Cartoon Avatar, Watercolor, Children's Book, Botanical
     {
