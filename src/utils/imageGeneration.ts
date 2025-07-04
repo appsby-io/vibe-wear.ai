@@ -46,9 +46,9 @@ const STYLE_PROMPTS: Record<string, string> = {
   
   realistic: "Photorealistic illustration of the subject only, highly detailed and lifelike. Isolated main element with studio lighting. Sharp focus, professional photography style. Subject on clean, minimal background for easy removal. High contrast and vibrant colors. No t-shirt mockup, just the design element itself. Professional quality suitable for direct-to-garment printing.",
   
-  "black-and-white": "realistic vintage photograph, highly detailed, sharp focus, dramatic lighting with strong shadows, high contrast, retro aesthetic, centered composition. Perfect for single-color screen printing. Clean, striking design that works on any color garment.",
+  "black-and-white": "Black and white vintage photograph style illustration of the subject only. Highly detailed, sharp focus, dramatic lighting with strong shadows. High contrast monochrome, retro aesthetic, centered composition. No t-shirt mockup, just the design element itself. Perfect for single-color screen printing. Clean, striking isolated subject.",
 
-  "vector-stencil": "High contrast black and white t-shirt design. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). Perfect for single-color screen printing. Clean, striking design that works on any color garment.",
+  "vector-stencil": "High contrast black and white stencil art of the subject only. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). No t-shirt mockup, just the design element itself. Perfect for single-color screen printing.",
   
   botanical: "minimalist, elegant t-shirt design with clean thin lines. Hand-drawn botanical illustration style with delicate line work and subtle shading. Scientific illustration style simplified for apparel. Centered composition with botanical element as hero. Works well on light or dark garments. No complex backgrounds, focus on botanical beauty.",
   
