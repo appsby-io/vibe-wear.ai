@@ -165,7 +165,31 @@ export default async (req: Request) => {
 
     // Forward the JSON payload ({ created, data:[{url|b64_json}] })
     const data = await apiRes.json();
-    return new Response(JSON.stringify(data), {
+    
+    // Check if response might be too large (base64 images can be several MB)
+    const responseString = JSON.stringify(data);
+    const responseSizeKB = Math.round(responseString.length / 1024);
+    console.log('Response size:', responseSizeKB, 'KB');
+    
+    // Netlify Edge Functions have a 6MB response limit
+    if (responseString.length > 5 * 1024 * 1024) {
+      console.error('Response too large:', responseSizeKB, 'KB');
+      return new Response(
+        JSON.stringify({ 
+          error: 'Generated image is too large. Try using standard quality instead of HD.',
+          size: responseSizeKB + 'KB'
+        }),
+        { 
+          status: 507, // Insufficient Storage
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      );
+    }
+    
+    return new Response(responseString, {
       headers: { 
         "content-type": "application/json",
         'Access-Control-Allow-Origin': '*',

@@ -244,7 +244,9 @@ export async function generateDesign(
             errorMessage = 'Server error. The image generation service is temporarily unavailable. Please try again in a few seconds.';
           } else if (response.status === 504 || errorData.error?.includes('timeout')) {
             errorMessage = 'Request timed out. Image generation is taking longer than expected. Please try again with a simpler prompt.';
-          } else if (response.status === 413 || errorData.error?.includes('too large')) {
+          } else if (response.status === 507 || errorData.error?.includes('too large')) {
+            errorMessage = 'Generated image is too large. Try using standard quality instead of HD to reduce file size.';
+          } else if (response.status === 413) {
             errorMessage = 'Request too large. Please try with a smaller reference image or simpler prompt.';
           } else if (errorData.error) {
             // Show the actual error from the API
