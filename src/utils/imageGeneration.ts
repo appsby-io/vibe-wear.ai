@@ -46,7 +46,7 @@ const STYLE_PROMPTS: Record<string, string> = {
   
   realistic: "Photorealistic image of the subject only, highly detailed and lifelike. Sharp focus, professional photography style. clean, minimal background. High contrast and vibrant colors. No t-shirt mockup. Professional quality suitable for direct-to-garment printing.",
   
-  "black-and-white": "Black and white vintage photograph of the subject only. Highly detailed, sharp focus, dramatic lighting with strong shadows. High contrast monochrome, retro aesthetic, centered composition. No t-shirt mockup, just the image itself. Perfect for single-color screen printing. Clean, striking isolated subject.",
+  "black-and-white": "Black and white vintage photograph. Highly detailed, sharp focus, lighting with strong shadows. High contrast monochrome, retro aesthetic, centered composition. No t-shirt mockup, just the image itself. Clean, striking isolated subject.",
 
   "vector-stencil": "High contrast black and white stencil art of the subject only. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). No t-shirt mockup, just the design element itself. Perfect for single-color screen printing.",
   
@@ -59,6 +59,8 @@ const STYLE_PROMPTS: Record<string, string> = {
   grunge: "Edgy grunge t-shirt design. Distressed textures on main graphic element. High contrast - primarily black with accent colors. Raw, rebellious aesthetic. Bold central image with rough edges. Vintage band t-shirt inspired. Works well on black or dark colored shirts. Strong visual impact.",
   
   "y2k-chrome": "Oversized slogan in chunky chrome liquid bubble letters, with dropping liquid, holographic pink-lilac-cyan gradient, tiny star sparkles, soft drop shadow, white background, flat vector, 1999 desktop aesthetic.",
+  
+  graffiti: "One-word slogan in lime-green graffiti bubble letters, heavy black outline, red paint-splat drip shape behind, clean white background.",
 };
 
 // T-shirt design technical specifications

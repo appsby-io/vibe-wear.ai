@@ -10,6 +10,7 @@ import StyleGrunge from '../assets/style_grunge.jpg';
 import StyleRealistic from '../assets/style_realistic.jpg';
 import StyleStencil from '../assets/style_stencil.jpg';
 import StyleY2KChrome from '../assets/style_y2k-chrome.jpg';
+import StyleGraffiti from '../assets/style_graffiti.jpg';
 
 interface Style {
   id: string;
@@ -96,13 +97,12 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       description: 'Monochrome line art illustration',
       previewUrl: StyleY2KChrome,
     },
-    // Temporarily commented out - keeping for future use
-    // {
-    //   id: 'graffiti',
-    //   name: 'Graffiti',
-    //   description: 'Bold street art vibes',
-    //   previewUrl: StyleGraffiti,
-    // },
+    {
+      id: 'graffiti',
+      name: 'Graffiti',
+      description: 'Bold street art vibes',
+      previewUrl: StyleGraffiti,
+    },
   ];
 
   return (
