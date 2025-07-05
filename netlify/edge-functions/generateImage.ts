@@ -8,6 +8,7 @@ declare global {
   };
 }
 
+// Deno has these APIs natively, but we need to ensure proper error handling
 export default async (req: Request) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
@@ -105,38 +106,14 @@ export default async (req: Request) => {
     
     console.log('Trying gpt-image-1:', requestBody);
     
-    // Add timeout handling
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-    
-    let apiRes;
-    try {
-      apiRes = await fetch("https://api.openai.com/v1/images/generations", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestBody),
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-    } catch (error) {
-      clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
-        return new Response(
-          JSON.stringify({ error: 'Request timeout. Image generation took too long. Please try again.' }),
-          { 
-            status: 504,
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-            }
-          }
-        );
-      }
-      throw error;
-    }
+    let apiRes = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody)
+    });
 
     // If gpt-image-1 fails with 403/404, try DALL-E 3
     if (apiRes.status === 403 || apiRes.status === 404) {
@@ -150,37 +127,14 @@ export default async (req: Request) => {
         size: "1024x1024" // DALL-E 3 is strict about sizes
       };
       
-      // Reset timeout for DALL-E 3 call
-      const controller2 = new AbortController();
-      const timeoutId2 = setTimeout(() => controller2.abort(), 15000);
-      
-      try {
-        apiRes = await fetch("https://api.openai.com/v1/images/generations", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(requestBody),
-          signal: controller2.signal
-        });
-        clearTimeout(timeoutId2);
-      } catch (error) {
-        clearTimeout(timeoutId2);
-        if (error.name === 'AbortError') {
-          return new Response(
-            JSON.stringify({ error: 'Request timeout during fallback. Please try again.' }),
-            { 
-              status: 504,
-              headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-              }
-            }
-          );
-        }
-        throw error;
-      }
+      apiRes = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+      });
     }
 
     if (!apiRes.ok) {
@@ -220,10 +174,27 @@ export default async (req: Request) => {
 
   } catch (error) {
     console.error('Edge function error:', error);
+    
+    // More detailed error handling for debugging
+    let errorMessage = 'Internal server error';
+    let errorDetails = 'Unknown error';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorDetails = error.stack || error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+      errorDetails = error;
+    } else if (error && typeof error === 'object') {
+      errorMessage = JSON.stringify(error);
+      errorDetails = errorMessage;
+    }
+    
     return new Response(
       JSON.stringify({ 
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: errorMessage,
+        details: errorDetails,
+        type: error?.constructor?.name || 'Unknown'
       }),
       { 
         status: 500,
