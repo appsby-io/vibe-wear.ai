@@ -5,8 +5,6 @@
 [[edge_functions]]
   path = "/.netlify/edge-functions/generateImage"
   function = "generateImage"
-  # Increase timeout to 20 seconds for image generation
-  timeout = 20
 
 [[edge_functions]]
   path = "/.netlify/edge-functions/analyzeImage"
