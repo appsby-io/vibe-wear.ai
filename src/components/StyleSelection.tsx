@@ -9,6 +9,7 @@ import StyleChildrensBook from '../assets/style_childrens_book.jpg';
 import StyleGrunge from '../assets/style_grunge.jpg';
 import StyleRealistic from '../assets/style_realistic.jpg';
 import StyleStencil from '../assets/style_stencil.jpg';
+import StyleY2KChrome from '../assets/style_y2k-chrome.jpg';
 
 interface Style {
   id: string;
@@ -88,6 +89,12 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       name: 'Botanical',
       description: 'Hand-drawn botanical art',
       previewUrl: StyleBotanical,
+    },
+    {
+      id: 'y2k-chrome',
+      name: 'Y2K Chrome',
+      description: 'Monochrome line art illustration',
+      previewUrl: StyleY2KChrome,
     },
     // Temporarily commented out - keeping for future use
     // {

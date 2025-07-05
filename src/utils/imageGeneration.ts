@@ -57,6 +57,8 @@ const STYLE_PROMPTS: Record<string, string> = {
   "childrens-book": "Charming Hand-painted watercolor children's book illustration style t-shirt design. warm, earthy palette (soft ochre, muted teal, dust-rose blush), simple rounded shapes, no hard outlines, gentle wet-in-wet shading, visible cold-press paper grain, mid-century storybook vibe, full-body pose, playful and friendly character or scene. Limited pastel color palette. Main subject clearly defined. Minimal background elements. Hand-drawn quality but clean enough for printing. Positive, uplifting imagery.",
   
   grunge: "Edgy grunge t-shirt design. Distressed textures on main graphic element. High contrast - primarily black with accent colors. Raw, rebellious aesthetic. Bold central image with rough edges. Vintage band t-shirt inspired. Works well on black or dark colored shirts. Strong visual impact.",
+  
+  "y2k-chrome": "Monochrome graphite line illustration of the subject, posed like a 19th-century natural-history plate. Clean continuous strokes with even line width, subtle cross-hatching and micro-stippling for shading, no solid fills. Surrounded by a botanical wreath of slender leaves and simple five-petal flowers with balanced negative space. Drawn on soft off-white paper with faint grain. Flat vector output. No t-shirt mockup, just the design element itself.",
 };
 
 // T-shirt design technical specifications
