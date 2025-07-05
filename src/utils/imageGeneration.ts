@@ -32,25 +32,25 @@ export function validatePrompt(prompt: string): { valid: boolean; error?: string
   return { valid: true };
 }
 
-const contentGuidelines = "no offensive content, no copyrighted images, no real people or celebrities";
+const contentGuidelines = "no offensive content, no copyrighted images, no real people or celebrities, no t-shirt mockup";
 
 // T-shirt optimized style prompts
 const STYLE_PROMPTS: Record<string, string> = {
   cartoonblocks: "Vector-style 3D cartoon t-shirt design. Simplified blocky character as the main focal point, isolated on minimal background. Bold, chunky shapes with flat colors - bright primary colors that pop. Clean black outlines, no complex shading. Character takes up 70% of composition. Perfect for screen printing on apparel. No photorealism, no gradients, no complex backgrounds.",
   
-  cyberpunk: "Bold cyberpunk t-shirt graphic design. Main subject with neon glow effects - cyan, magenta, electric blue accents. High contrast design with deep blacks and bright neons. Simplified futuristic elements, clean vector-style illustration. Subject isolated on dark or minimal background. Strong silhouette that reads well on fabric. No complex environments, focus on iconic cyberpunk imagery.",
+  cyberpunk: "Bold cyberpunk t-shirt graphic design. Main subject with neon glow effects - cyan, magenta, electric blue accents. High contrast design bright neons. Simplified futuristic elements. Subject isolated on dark or minimal background. Strong silhouette that reads well on fabric. No complex environments, focus on iconic cyberpunk imagery.",
   
-  comic: "Vintage comic book style t-shirt design. Bold illustration with thick black ink outlines, flat colors, halftone dot patterns. Dynamic character or subject as focal point. Limited color palette - primary colors plus black. Clean, readable design that works at any size. Isolated subject on simple background. Comic book aesthetic without complex panels or environments.",
+  comic: "Create a single-panel vintage comic scene with a bold black frame and a slight off-white page tint. Use crisp, thick ink outlines, dramatic speed-lines, and a limited retro palette (sky-blue background, warm ochre desert ground, sandy highlights, and halftone shading). Keep the overall vibe playful, 1980s manga-inspired pokemon & digimon style, with subtle paper grain and slightly muted colors for a classic printed-comic feel.",
   
   watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft pastel watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
   
-  realistic: "Photorealistic illustration of the subject only, highly detailed and lifelike. Isolated main element with studio lighting. Sharp focus, professional photography style. Subject on clean, minimal background for easy removal. High contrast and vibrant colors. No t-shirt mockup, just the design element itself. Professional quality suitable for direct-to-garment printing.",
+  realistic: "Photorealistic image of the subject only, highly detailed and lifelike. Sharp focus, professional photography style. clean, minimal background. High contrast and vibrant colors. No t-shirt mockup. Professional quality suitable for direct-to-garment printing.",
   
-  "black-and-white": "Black and white vintage photograph style illustration of the subject only. Highly detailed, sharp focus, dramatic lighting with strong shadows. High contrast monochrome, retro aesthetic, centered composition. No t-shirt mockup, just the design element itself. Perfect for single-color screen printing. Clean, striking isolated subject.",
+  "black-and-white": "Black and white vintage photograph of the subject only. Highly detailed, sharp focus, dramatic lighting with strong shadows. High contrast monochrome, retro aesthetic, centered composition. No t-shirt mockup, just the image itself. Perfect for single-color screen printing. Clean, striking isolated subject.",
 
   "vector-stencil": "High contrast black and white stencil art of the subject only. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). No t-shirt mockup, just the design element itself. Perfect for single-color screen printing.",
   
-  botanical: "minimalist, elegant t-shirt design with clean thin lines. Hand-drawn botanical illustration style with delicate line work and subtle shading. Scientific illustration style simplified for apparel. Centered composition with botanical element as hero. Works well on light or dark garments. No complex backgrounds, focus on botanical beauty.",
+  botanical: "Black and White Monochrome graphite line illustration of the subject, posed like a 19th-century natural-history plate. Clean continuous strokes with even line width, subtle cross-hatching and micro-stippling for shading, no solid fills. Surrounded by a botanical wreath of slender leaves and simple five-petal flowers with balanced negative space. Flat vector output. No t-shirt mockup, just the design element itself.",
   
   "cartoon-avatar": "Fun cartoon character t-shirt design. Single character with exaggerated features, big personality. Bold outlines, flat colors, minimal shading. Character isolated on simple background. Expressive and memorable design. Works like a logo or mascot on apparel. Clean vector style that scales well.",
   
@@ -58,28 +58,29 @@ const STYLE_PROMPTS: Record<string, string> = {
   
   grunge: "Edgy grunge t-shirt design. Distressed textures on main graphic element. High contrast - primarily black with accent colors. Raw, rebellious aesthetic. Bold central image with rough edges. Vintage band t-shirt inspired. Works well on black or dark colored shirts. Strong visual impact.",
   
-  "y2k-chrome": "Monochrome graphite line illustration of the subject, posed like a 19th-century natural-history plate. Clean continuous strokes with even line width, subtle cross-hatching and micro-stippling for shading, no solid fills. Surrounded by a botanical wreath of slender leaves and simple five-petal flowers with balanced negative space. Drawn on soft off-white paper with faint grain. Flat vector output. No t-shirt mockup, just the design element itself.",
+  "y2k-chrome": "Oversized slogan in chunky chrome liquid bubble letters, with dropping liquid, holographic pink-lilac-cyan gradient, tiny star sparkles, soft drop shadow, white background, flat vector, 1999 desktop aesthetic.",
 };
 
 // T-shirt design technical specifications
-const technicalSpecs = "High resolution vector-style design, professional quality optimized for t-shirt printing, centered composition with clean edges. Subject isolated and prominent, taking up 60-80% of the frame. Simple, clean background that can be easily removed. No complex backgrounds, no photographic backgrounds, no gradients in background. Bold, clear design elements suitable for screen printing or DTG printing.";
+const technicalSpecs = "High resolution design, professional quality optimized for t-shirt printing, centered composition with clean edges. Subject isolated and prominent, taking up 60-80% of the frame. Simple, clean background that can be easily removed. No complex backgrounds, no gradients in background. Bold, clear design elements suitable for screen printing or DTG printing.";
 
 // Additional t-shirt design guidelines
 const tshirtDesignGuidelines = "Create a design that works as a standalone graphic on apparel. Focus on the main subject with high contrast. Use bold, confident strokes and shapes. Ensure design reads well from a distance. Avoid tiny details that won't print well. Design should be eye-catching and memorable.";
 
 // Common t-shirt design issues to avoid
-const avoidancePrompt = "AVOID: photographic backgrounds, complex gradients in background, multiple scattered elements, text unless specifically requested, realistic environments, busy compositions. FOCUS ON: single strong focal point, clean composition, bold graphics.";
+const avoidancePrompt = "AVOID: backgrounds unless specifically requested, complex gradients in background, multiple scattered elements, text unless specifically requested, realistic environments, busy compositions. FOCUS ON: single strong focal point, clean composition, bold graphics.";
+
 
 function getBackgroundInstruction(productColor: string): string {
   const colorLower = productColor.toLowerCase();
   
   // T-shirt specific design instructions based on garment color
   if (colorLower.includes('black')) {
-    return "T-shirt design for BLACK garment: Subject isolated on minimal dark background for easy removal. Use bright, vibrant colors (white, neon, pastels) that pop against black fabric. Strong contrast is essential. Bold graphic with light elements. Avoid dark colors that disappear on black shirts. Design should glow against dark background.";
+    return "T-shirt design for BLACK garment: Subject isolated on minimal dark background for easy removal. Use bright, vibrant colors (white, neon, pastels) that pop against black fabric. Strong contrast is essential. Bold motif with light elements. Avoid dark colors that disappear on black shirts. Design should glow against dark background.";
   } else if (colorLower.includes('white')) {
-    return "T-shirt design for WHITE garment: Subject isolated on minimal light background for easy removal. Use bold, saturated colors and strong black outlines that stand out on white fabric. Rich, deep colors work best. Avoid light pastels or white elements that vanish on white shirts. High contrast graphic design.";
+    return "T-shirt design for WHITE garment: Subject isolated on minimal light background for easy removal. Design should stand out on white fabric. Avoid light pastels or white elements that vanish on white shirts. High contrast design.";
   } else {
-    return "T-shirt design for COLORED garment: Subject isolated on neutral background for easy removal. Use high contrast colors that complement the shirt color. Strong, bold design that remains visible. Consider both light and dark elements for versatility. Clear, impactful graphic that works on colored fabric.";
+    return "T-shirt design for COLORED garment: Subject isolated on neutral background for easy removal. Use high contrast colors that complement the shirt color. Strong, bold design that remains visible. Consider both light and dark elements for versatility. Clear, impactful motif that works on colored fabric.";
   }
 }
 
@@ -98,10 +99,7 @@ function preprocessPromptForTshirt(userPrompt: string): string {
   
   // Replace problematic phrases
   processed = processed
-    .replace(/photo of/gi, 'illustration of')
-    .replace(/photograph of/gi, 'design of')
     .replace(/picture of/gi, 'graphic of')
-    .replace(/realistic photo/gi, 'detailed illustration')
     .replace(/in a forest/gi, 'with decorative forest elements')
     .replace(/in the city/gi, 'with urban design elements')
     .replace(/at the beach/gi, 'with beach-themed elements');
