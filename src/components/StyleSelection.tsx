@@ -1,5 +1,5 @@
 import React from 'react';
-import StyleCyberpunk from '../assets/style_cyberpunk copy.jpg';
+import StyleHalftoneBrutalism from '../assets/style_halftone_brutalism.jpg';
 import StyleComic from '../assets/style_comic copy.jpg';
 import StyleWatercolor from '../assets/style_watercolor copy.jpg';
 import StyleBlackAndWhite from '../assets/style_black_and_white.jpg';
@@ -29,7 +29,7 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
   onStyleSelect,
 }) => {
   const styles: Style[] = [
-    // Row 1: Realistic, Black & White, Cyberpunk, Grunge, Vector Stencil
+    // Row 1: Realistic, Black & White, Halftone Brutalism, Grunge, Vector Stencil
     {
       id: 'realistic',
       name: 'Realistic',
@@ -43,10 +43,10 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       previewUrl: StyleBlackAndWhite,
     },
     {
-      id: 'cyberpunk',
-      name: 'Cyberpunk',
-      description: 'Futuristic neon aesthetics',
-      previewUrl: StyleCyberpunk,
+      id: 'halftone-brutalism',
+      name: 'Halftone Brutalism',
+      description: 'Black & yellow editorial style',
+      previewUrl: StyleHalftoneBrutalism,
     },
     {
       id: 'grunge',

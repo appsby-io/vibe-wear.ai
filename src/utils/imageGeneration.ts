@@ -38,7 +38,7 @@ const contentGuidelines = "no offensive content, no copyrighted images, no real 
 const STYLE_PROMPTS: Record<string, string> = {
   cartoonblocks: "Vector-style 3D cartoon t-shirt design. Simplified blocky character as the main focal point, isolated on minimal background. Bold, chunky shapes with flat colors - bright primary colors that pop. Clean black outlines, no complex shading. Character takes up 70% of composition. Perfect for screen printing on apparel. No photorealism, no gradients, no complex backgrounds.",
   
-  cyberpunk: "Bold cyberpunk t-shirt graphic design. Main subject with neon glow effects - cyan, magenta, electric blue accents. High contrast design bright neons. Simplified futuristic elements. Subject isolated on dark or minimal background. Strong silhouette that reads well on fabric. No complex environments, focus on iconic cyberpunk imagery.",
+  "halftone-brutalism": "Brutalist editorial collage style with surrealist black-and-yellow duotone. Bold monochrome contrast (charcoal black & industrial yellow), grainy halftone textures, overexposed elements, minimal geometric overlays, magazine-cutout feel. Retro-futuristic and conceptual, evoking underground zine aesthetics.",
   
   comic: "Create a single-panel vintage comic scene with a bold black frame and a slight off-white page tint. Use crisp, thick ink outlines, dramatic speed-lines, and a limited retro palette (sky-blue background, warm ochre desert ground, sandy highlights, and halftone shading). Keep the overall vibe playful, 1980s manga-inspired pokemon & digimon style, with subtle paper grain and slightly muted colors for a classic printed-comic feel.",
   
