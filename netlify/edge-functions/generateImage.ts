@@ -99,7 +99,7 @@ export default async (req: Request) => {
     let requestBody: Record<string, unknown> = {
       model: "gpt-image-1",
       prompt: enhancedPrompt,
-      quality: quality === 'hd' ? 'high' : 'medium',
+      quality: quality === 'hd' ? 'high' : 'low',
       n: 1,
       size
     };
@@ -166,21 +166,40 @@ export default async (req: Request) => {
     // Forward the JSON payload ({ created, data:[{url|b64_json}] })
     const data = await apiRes.json();
     
-    // Check if response might be too large (base64 images can be several MB)
-    const responseString = JSON.stringify(data);
-    const responseSizeKB = Math.round(responseString.length / 1024);
-    console.log('Response size:', responseSizeKB, 'KB');
-    
-    // Netlify Edge Functions have a 6MB response limit
-    if (responseString.length > 5 * 1024 * 1024) {
-      console.error('Response too large:', responseSizeKB, 'KB');
+    // Try to stringify the response to check size
+    let responseString;
+    try {
+      responseString = JSON.stringify(data);
+      const responseSizeKB = Math.round(responseString.length / 1024);
+      console.log('Response size:', responseSizeKB, 'KB');
+      
+      // Netlify Edge Functions have a 6MB response limit
+      if (responseString.length > 5 * 1024 * 1024) {
+        console.error('Response too large:', responseSizeKB, 'KB');
+        return new Response(
+          JSON.stringify({ 
+            error: 'Generated image is too large. Try using standard quality instead of HD.',
+            size: responseSizeKB + 'KB'
+          }),
+          { 
+            status: 507, // Insufficient Storage
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            }
+          }
+        );
+      }
+    } catch (stringifyError) {
+      console.error('Failed to stringify response:', stringifyError);
+      // If we can't stringify, it's likely too large or has issues
       return new Response(
         JSON.stringify({ 
-          error: 'Generated image is too large. Try using standard quality instead of HD.',
-          size: responseSizeKB + 'KB'
+          error: 'Failed to process image response. The image may be too large.',
+          details: 'Stringify failed'
         }),
         { 
-          status: 507, // Insufficient Storage
+          status: 500,
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
