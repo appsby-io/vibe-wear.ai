@@ -99,7 +99,7 @@ export default async (req: Request) => {
     let requestBody: Record<string, unknown> = {
       model: "gpt-image-1",
       prompt: enhancedPrompt,
-      quality: quality === 'hd' ? 'high' : 'low',
+      quality: quality === 'hd' ? 'high' : 'medium',
       n: 1,
       size
     };

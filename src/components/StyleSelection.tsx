@@ -11,6 +11,7 @@ import StyleRealistic from '../assets/style_realistic.jpg';
 import StyleStencil from '../assets/style_stencil.jpg';
 import StyleY2KChrome from '../assets/style_y2k-chrome.jpg';
 import StyleGraffiti from '../assets/style_graffiti.jpg';
+import StyleGraffiti2 from '../assets/style_graffiti_2.jpg';
 
 interface Style {
   id: string;
@@ -102,6 +103,12 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       name: 'Graffiti',
       description: 'Bold street art vibes',
       previewUrl: StyleGraffiti,
+    },
+    {
+      id: 'graffiti-2',
+      name: 'Graffiti 2',
+      description: 'Tag-style electric blue script',
+      previewUrl: StyleGraffiti2,
     },
   ];
 

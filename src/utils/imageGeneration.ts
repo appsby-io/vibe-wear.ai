@@ -38,9 +38,9 @@ const contentGuidelines = "no offensive content, no copyrighted images, no real 
 const STYLE_PROMPTS: Record<string, string> = {
   cartoonblocks: "Vector-style 3D cartoon t-shirt design. Simplified blocky character as the main focal point, isolated on minimal background. Bold, chunky shapes with flat colors - bright primary colors that pop. Clean black outlines, no complex shading. Character takes up 70% of composition. Perfect for screen printing on apparel. No photorealism, no gradients, no complex backgrounds.",
   
-  "halftone-brutalism": "Brutalist editorial collage style with surrealist black-and-yellow duotone. Bold monochrome contrast (charcoal black & industrial yellow), grainy halftone textures, overexposed elements, minimal geometric overlays, magazine-cutout feel. Retro-futuristic and conceptual, evoking underground zine aesthetics.",
+  "halftone-brutalism": "editorial geometric collage style with surrealist black-and-yellow duotone. Bold monochrome contrast (charcoal black & industrial yellow), grainy halftone textures, overexposed elements, minimal geometric overlays, magazine-cutout feel. Retro-futuristic and conceptual, evoking underground zine aesthetics.",
   
-  comic: "Create a single-panel vintage comic scene with a bold black frame and a slight off-white page tint. Use crisp, thick ink outlines, dramatic speed-lines, and a limited retro palette (sky-blue background, warm ochre desert ground, sandy highlights, and halftone shading). Keep the overall vibe playful, 1980s manga-inspired pokemon & digimon style, with subtle paper grain and slightly muted colors for a classic printed-comic feel.",
+  comic: "Create a three-panel vintage comic scene with a bold black frame and a slight off-white page tint. Use crisp, thick ink outlines, dramatic speed-lines, and a limited retro palette (sky-blue background, warm ochre desert ground, sandy highlights, and halftone shading). Keep the overall vibe playful, 1980s manga-inspired pokemon & digimon style, with subtle paper grain and slightly muted colors for a classic printed-comic feel.",
   
   watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft pastel watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
   
@@ -61,6 +61,8 @@ const STYLE_PROMPTS: Record<string, string> = {
   "y2k-chrome": "Oversized slogan in chunky chrome liquid bubble letters, with dropping liquid, holographic pink-lilac-cyan gradient, tiny star sparkles, soft drop shadow, white background, flat vector, 1999 desktop aesthetic.",
   
   graffiti: "One-word slogan in lime-green graffiti bubble letters, heavy black outline, red paint-splat drip shape behind, clean white background.",
+  
+  "graffiti-2": "Tag-style script in electric-blue with white inner glow, spray-paint overspray.",
 };
 
 // T-shirt design technical specifications
