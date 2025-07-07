@@ -1,5 +1,6 @@
 // src/utils/imageGeneration.ts
 // import { logPromptToDatabase } from './promptLogger'; // Temporarily disabled
+import { useFeatureStore } from '../store/useFeature';
 
 // Validation function for prompts
 export function validatePrompt(prompt: string): { valid: boolean; error?: string } {
@@ -214,8 +215,16 @@ export async function generateDesign(
 
     console.log('Enhanced prompt (gpt-image-1):', enhancedPrompt);
 
-    // Use Netlify edge function for secure image generation
-    const response = await fetch('/.netlify/edge-functions/generateImage', {
+    // Check if we should use regular functions (longer timeout) or edge functions
+    const useRegularFunctions = useFeatureStore.getState().getFeature('useRegularFunctions');
+    const endpoint = useRegularFunctions 
+      ? '/.netlify/functions/generateImageAPI'
+      : '/.netlify/edge-functions/generateImage';
+    
+    console.log(`Using ${useRegularFunctions ? 'regular' : 'edge'} function:`, endpoint);
+
+    // Use Netlify function for secure image generation
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

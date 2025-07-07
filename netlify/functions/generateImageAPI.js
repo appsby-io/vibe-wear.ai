@@ -1,0 +1,143 @@
+// Regular Netlify Function for OpenAI image generation
+// This has a 10-second timeout (26 seconds on Pro plans)
+
+exports.handler = async (event, context) => {
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
+
+  // Only accept POST
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
+  }
+
+  try {
+    // Parse request body
+    const { prompt, quality = 'standard', size = '1024x1024' } = JSON.parse(event.body || '{}');
+
+    if (!prompt) {
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Prompt is required' })
+      };
+    }
+
+    // Get API key from environment
+    const apiKey = process.env.OPENAI_API_KEY_SERVER;
+    if (!apiKey) {
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'OpenAI API key not configured' })
+      };
+    }
+
+    console.log('Generating image with prompt length:', prompt.length);
+
+    // Try gpt-image-1 first
+    let requestBody = {
+      model: "gpt-image-1",
+      prompt: prompt,
+      quality: quality === 'hd' ? 'high' : 'medium',
+      n: 1,
+      size: size
+    };
+
+    let response = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    // Fallback to DALL-E 3 if gpt-image-1 fails
+    if (response.status === 403 || response.status === 404) {
+      console.log('Falling back to DALL-E 3');
+      
+      requestBody = {
+        model: "dall-e-3",
+        prompt: prompt,
+        quality: quality === 'hd' ? 'hd' : 'standard',
+        n: 1,
+        size: "1024x1024"
+      };
+
+      response = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+      });
+    }
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Unknown error' }));
+      console.error('OpenAI API error:', response.status, error);
+      
+      return {
+        statusCode: response.status,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          error: error.error?.message || error.message || `OpenAI API error: ${response.status}`,
+          details: error
+        })
+      };
+    }
+
+    const data = await response.json();
+    
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    };
+
+  } catch (error) {
+    console.error('Function error:', error);
+    
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        error: error.message || 'Internal server error',
+        type: error.constructor.name
+      })
+    };
+  }
+};
