@@ -57,23 +57,48 @@ exports.handler = async (event, context) => {
 
     console.log('Generating image with prompt length:', prompt.length);
 
-    // Try gpt-image-1 first
+    // Always use gpt-image-1 with low quality for faster generation
     let requestBody = {
       model: "gpt-image-1",
       prompt: prompt,
-      quality: quality === 'hd' ? 'high' : 'medium',
+      quality: 'low', // Force low quality to reduce generation time
       n: 1,
       size: size
     };
 
-    let response = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestBody)
-    });
+    // Add AbortController for timeout handling (9 seconds to leave buffer)
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 9000);
+    
+    let response;
+    try {
+      response = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
+      });
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        return {
+          statusCode: 504,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            error: 'Image generation is taking too long. Please try with a simpler prompt or use standard quality.',
+            timeout: true
+          })
+        };
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
 
     // Fallback to DALL-E 3 if gpt-image-1 fails
     if (response.status === 403 || response.status === 404) {
