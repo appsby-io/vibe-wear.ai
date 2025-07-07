@@ -40,7 +40,7 @@ const STYLE_PROMPTS: Record<string, string> = {
   
   "halftone-brutalism": "editorial geometric collage style with surrealist black-and-yellow duotone. Bold monochrome contrast (charcoal black & industrial yellow), grainy halftone textures, overexposed elements, minimal geometric overlays, magazine-cutout feel. Retro-futuristic and conceptual, evoking underground zine aesthetics.",
   
-  comic: "Create a single-panel vintage comic scene with a bold black frame and a slight off-white page tint. Charming characters like Studio Ghibli and modern Pokemon style.Use crisp, thick ink outlines, dramatic speed-lines, and a limited retro palette (sky-blue background, warm ochre desert ground, sandy highlights, and halftone shading). Keep the overall vibe playful, 1980s manga-inspired pokemon & digimon style, with subtle paper grain and slightly muted colors for a classic printed-comic feel.",
+  comic: "Create a single-panel vintage comic scene with a bold black frame and a slight off-white page tint. Charming characters like Studio Ghibli and modern Pokemon style.Use crisp, thick ink outlines, dramatic speed-lines, and a limited retro palette (sky-blue background, white, warm ochre desert ground, sandy highlights, and halftone shading). Keep the overall vibe playful, 1980s manga-inspired pokemon & digimon style, with subtle paper grain and slightly muted colors for a classic printed-comic feel.",
   
   watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft pastel watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
   
@@ -50,7 +50,9 @@ const STYLE_PROMPTS: Record<string, string> = {
 
   "vector-stencil": "High contrast black and white stencil art of the subject only. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). No t-shirt mockup, just the design element itself. Perfect for single-color screen printing.",
   
-  botanical: "Black and White Monochrome graphite line illustration of the subject, posed like a 19th-century natural-history plate. Clean continuous strokes with even line width, subtle cross-hatching and micro-stippling for shading, no solid fills. Surrounded by a botanical wreath of slender leaves and simple five-petal flowers with balanced negative space. Flat vector output. No t-shirt mockup, just the design element itself.",
+  // botanical: "Black and White Monochrome graphite line illustration of the subject, posed like a 19th-century natural-history plate. Clean continuous strokes with even line width, subtle cross-hatching and micro-stippling for shading, no solid fills. Surrounded by a botanical wreath of slender leaves and simple five-petal flowers with balanced negative space. Flat vector output. No t-shirt mockup, just the design element itself.",
+  
+  "vintage-stamp": "Write {TEXT} on {MOTIVE} graphic, vintage tee illustration, hand-drawn linework, faded ink texture, retro 70s style, circular outline badge layout, bold serif lettering, two-tone color scheme (navy + beige), flat print-style graphic, distressed screenprint stemp look",
   
   "cartoon-avatar": "Fun cartoon character t-shirt design. Single character with exaggerated features, big personality. Bold outlines, flat colors, minimal shading. Character isolated on simple background. Expressive and memorable design. Works like a logo or mascot on apparel. Clean vector style that scales well.",
   
@@ -62,9 +64,11 @@ const STYLE_PROMPTS: Record<string, string> = {
   
   graffiti: "One-word slogan in lime-green graffiti bubble letters, heavy black outline, red paint-splat drip shape behind, clean white background.",
   
-  "graffiti-2": "Tag-style script in electric-blue with white inner glow, spray-paint overspray.",
+  "graffiti-2": "Tag-style script with soft electric-blue and white inner glow, spray-paint overspray.",
   
   "inspirational-quote": "Motivational quote in decorative hand-lettered typography. Mixed typefaces (script, serif, sans-serif), curved text lines, swashes, banners, stars, and playful accents. White lettering on dark background, vintage chalkboard or sign-painting aesthetic. Centered layout, high readability, clean and ornamental.",
+  
+  "kawaii-skull": "Kawaii skull-and-sprinkles frame around {TEXT}, yellow & mint palette, chunky black outline, soft drop shadow, off-white background.",
 };
 
 // T-shirt design technical specifications

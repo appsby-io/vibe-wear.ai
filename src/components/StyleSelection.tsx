@@ -3,7 +3,8 @@ import StyleHalftoneBrutalism from '../assets/style_halftone_brutalism.jpg';
 import StyleComic from '../assets/style_comic copy.jpg';
 import StyleWatercolor from '../assets/style_watercolor copy.jpg';
 import StyleBlackAndWhite from '../assets/style_black_and_white.jpg';
-import StyleBotanical from '../assets/style_botanical.jpg';
+// import StyleBotanical from '../assets/style_botanical.jpg';
+import StyleVintageStamp from '../assets/style_stemp.jpg';
 import StyleCartoonAvatar from '../assets/style_cartoon_avatar.jpg';
 import StyleChildrensBook from '../assets/style_childrens_book.jpg';
 import StyleGrunge from '../assets/style_grunge.jpg';
@@ -13,6 +14,7 @@ import StyleY2KChrome from '../assets/style_y2k-chrome.jpg';
 import StyleGraffiti from '../assets/style_graffiti.jpg';
 import StyleGraffiti2 from '../assets/style_graffiti_2.jpg';
 import StyleInspirationalQuote from '../assets/style_inspirational_quote.jpg';
+import StyleKawaii from '../assets/style_kawaii.jpg';
 
 interface Style {
   id: string;
@@ -57,6 +59,12 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       previewUrl: StyleInspirationalQuote,
     },
     {
+      id: 'kawaii-skull',
+      name: 'Kawaii Skull',
+      description: 'Cute skull with sprinkles',
+      previewUrl: StyleKawaii,
+    },
+    {
       id: 'realistic',
       name: 'Realistic',
       description: 'Photorealistic style',
@@ -86,11 +94,17 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       description: 'Raw rock poster style',
       previewUrl: StyleGrunge,
     },
+    // {
+    //   id: 'botanical',
+    //   name: 'Botanical',
+    //   description: 'Hand-drawn botanical art',
+    //   previewUrl: StyleBotanical,
+    // },
     {
-      id: 'botanical',
-      name: 'Botanical',
-      description: 'Hand-drawn botanical art',
-      previewUrl: StyleBotanical,
+      id: 'vintage-stamp',
+      name: 'Vintage Stamp',
+      description: 'Retro 70s badge style',
+      previewUrl: StyleVintageStamp,
     },
     {
       id: 'watercolor',
