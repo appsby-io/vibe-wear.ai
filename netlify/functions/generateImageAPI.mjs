@@ -62,11 +62,11 @@ export async function handler(event, context) {
     console.log('Starting generation at:', new Date().toISOString());
     console.log('Quality:', quality, 'Size:', size);
 
-    // Use gpt-image-1 with medium quality for better results
+    // Use gpt-image-1 with low quality until 26-second timeout is activated
     let requestBody = {
       model: "gpt-image-1",
       prompt: prompt,
-      quality: 'medium', // Medium quality for better generation results
+      quality: 'low', // Low quality to avoid timeouts (switch to medium after Netlify enables 26s)
       n: 1,
       size: size
     };
