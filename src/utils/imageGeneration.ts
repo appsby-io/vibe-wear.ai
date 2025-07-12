@@ -72,26 +72,26 @@ const STYLE_PROMPTS: Record<string, string> = {
   "kawaii-skull": "Kawaii skull-and-sprinkles frame around {TEXT}, yellow & mint palette, chunky black outline, soft drop shadow, off-white background.",
 };
 
-// Shorter, optimized prompts for faster generation
-const technicalSpecs = "T-shirt design: centered, isolated subject, 60-80% frame, clean removable background.";
+// T-shirt design technical specifications
+const technicalSpecs = "High resolution design, professional quality optimized for t-shirt printing, centered composition with clean edges. Subject isolated and prominent, taking up 60-80% of the frame. Simple, clean background that can be easily removed. No complex backgrounds, no gradients in background. Bold, clear design elements suitable for screen printing or DTG printing.";
 
-// Removed verbose guidelines to reduce prompt length
-const tshirtDesignGuidelines = "";
+// Additional t-shirt design guidelines
+const tshirtDesignGuidelines = "Create a design that works as a standalone graphic on apparel. Focus on the main subject with high contrast. Use bold, confident strokes and shapes. Ensure design reads well from a distance. Avoid tiny details that won't print well. Design should be eye-catching and memorable.";
 
-// Simplified avoidance prompt
-const avoidancePrompt = "";
+// Common t-shirt design issues to avoid
+const avoidancePrompt = "AVOID: backgrounds unless specifically requested, complex gradients in background, multiple scattered elements, text unless specifically requested, realistic environments, busy compositions. FOCUS ON: single strong focal point, clean composition, bold graphics.";
 
 
 function getBackgroundInstruction(productColor: string): string {
   const colorLower = productColor.toLowerCase();
   
-  // Simplified instructions for faster generation
+  // T-shirt specific design instructions based on garment color
   if (colorLower.includes('black')) {
-    return "For black shirt: bright colors, high contrast.";
+    return "T-shirt design for BLACK garment: Subject isolated on minimal dark background for easy removal. Use bright, vibrant colors (white, neon, pastels) that pop against black fabric. Strong contrast is essential. Bold motif with light elements. Avoid dark colors that disappear on black shirts. Design should glow against dark background.";
   } else if (colorLower.includes('white')) {
-    return "For white shirt: bold colors, avoid light pastels.";
+    return "T-shirt design for WHITE garment: Subject isolated on minimal light background for easy removal. Design should stand out on white fabric. Avoid light pastels or white elements that vanish on white shirts. High contrast design.";
   } else {
-    return "For colored shirt: high contrast design.";
+    return "T-shirt design for COLORED garment: Subject isolated on neutral background for easy removal. Use high contrast colors that complement the shirt color. Strong, bold design that remains visible. Consider both light and dark elements for versatility. Clear, impactful motif that works on colored fabric.";
   }
 }
 
@@ -132,12 +132,12 @@ function enhancePrompt(userPrompt: string, style: string, productColor: string, 
   const basePrompt = `Professional t-shirt design: ${cleanPrompt}`;
   
   if (imageAnalysis) {
-    // Concise prompt for faster generation
-    return `${basePrompt}. Style: ${imageAnalysis}. ${backgroundInstruction}. ${technicalSpecs}`;
+    // When we have a reference image analysis, prioritize it over the selected style
+    return `${basePrompt}. Artistic style: ${imageAnalysis}. ${backgroundInstruction}. ${technicalSpecs}. ${tshirtDesignGuidelines}. ${avoidancePrompt}. ${contentGuidelines}. IMPORTANT: Create a bold, isolated graphic design perfect for t-shirt printing with the main subject prominent and a simple, solid color or minimal gradient background that can be easily removed.`;
   } else {
     // Use the selected style when no reference image
     const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.realistic;
-    return `${basePrompt}. ${stylePrompt}. ${backgroundInstruction}. ${technicalSpecs}`;
+    return `${basePrompt}. ${stylePrompt}. ${backgroundInstruction}. ${technicalSpecs}. ${tshirtDesignGuidelines}. ${avoidancePrompt}. ${contentGuidelines}. IMPORTANT: Create a bold, isolated graphic design perfect for t-shirt printing with the main subject prominent and a simple, solid color or minimal gradient background that can be easily removed.`;
   }
 }
 
