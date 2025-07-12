@@ -191,8 +191,22 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
       {/* Mobile Layout - Below header, non-sticky */}
       <div className="lg:hidden bg-white border-b border-gray-100 py-4">
         <div className="px-4">
-          {/* Top row: 2 dropdowns */}
-          <div className="grid grid-cols-2 gap-2 mb-3">
+          {/* Top row: Price and Add to Cart */}
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-2xl font-bold text-black font-source-sans">
+              ${totalPrice}
+            </span>
+            <button 
+              onClick={onAddToCart}
+              className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors font-source-sans font-semibold"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              <span className="text-sm">Add to Cart</span>
+            </button>
+          </div>
+          
+          {/* Bottom row: 2 dropdowns */}
+          <div className="grid grid-cols-2 gap-2">
             <Dropdown
               label="Color"
               value={config.color}
@@ -210,20 +224,6 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
               dropdownKey="size"
               hideLabel={true}
             />
-          </div>
-          
-          {/* Bottom row: Price and Add to Cart */}
-          <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-black font-source-sans">
-              ${totalPrice}
-            </span>
-            <button 
-              onClick={onAddToCart}
-              className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors font-source-sans font-semibold"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              <span className="text-sm">Add to Cart</span>
-            </button>
           </div>
         </div>
       </div>
