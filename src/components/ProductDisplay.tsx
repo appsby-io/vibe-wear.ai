@@ -145,11 +145,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
           {/* Product Display */}
           <div className="relative">
             <div 
-              className="relative bg-white rounded-2xl overflow-hidden"
-              style={{ 
-                width: 'auto',
-                height: window.innerWidth < 1024 ? '360px' : '560px' 
-              }}
+              className="relative bg-white rounded-2xl overflow-hidden h-[360px] lg:h-[560px]"
             >
               {/* Product Base */}
               <div className="w-full h-full bg-white flex items-center justify-center">
@@ -163,11 +159,8 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
               {/* Design Overlay with spring animation */}
               {shouldShowDesign && (
                 <div
-                  className="absolute cursor-pointer animate-bounce"
+                  className="absolute cursor-pointer inset-0 flex items-center justify-center"
                   style={{
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
                     animation: 'spring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
                   }}
                   onClick={handleDesignImageClick}
@@ -176,11 +169,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                   <img
                     src={currentDesign.imageUrl}
                     alt={currentDesign.name}
-                    className="object-contain hover:scale-105 transition-transform"
-                    style={{ 
-                      width: window.innerWidth < 1024 ? '120px' : '160px', 
-                      height: window.innerWidth < 1024 ? '120px' : '160px' 
-                    }}
+                    className="object-contain hover:scale-105 transition-transform w-[120px] h-[120px] lg:w-[160px] lg:h-[160px]"
                     draggable={false}
                     onContextMenu={(e) => e.preventDefault()} // Prevent right-click context menu
                   />
