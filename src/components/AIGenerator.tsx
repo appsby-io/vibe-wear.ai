@@ -315,21 +315,23 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  <button
-                    type="button"
-                    onClick={handleImageClick}
-                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
-                    title="Upload reference image"
-                  >
-                    <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
-                    <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
-                  </button>
-                  {showTooltip === 'image_upload' && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                      Coming soon 🦘
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                    </div>
-                  )}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={handleImageClick}
+                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
+                      title="Upload reference image"
+                    >
+                      <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                      <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
+                    </button>
+                    {showTooltip === 'image_upload' && (
+                      <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
+                        Coming soon 🦘
+                        <div className="absolute top-full right-2 w-2 h-2 bg-black rotate-45"></div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Generate button - right aligned */}
@@ -496,21 +498,23 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  <button
-                    type="button"
-                    onClick={handleImageClick}
-                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
-                    title="Upload reference image"
-                  >
-                    <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
-                    <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
-                  </button>
-                  {showTooltip === 'image_upload' && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                      Coming soon 🦘
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                    </div>
-                  )}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={handleImageClick}
+                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
+                      title="Upload reference image"
+                    >
+                      <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                      <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
+                    </button>
+                    {showTooltip === 'image_upload' && (
+                      <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
+                        Coming soon 🦘
+                        <div className="absolute top-full right-2 w-2 h-2 bg-black rotate-45"></div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Generate button - right aligned */}
