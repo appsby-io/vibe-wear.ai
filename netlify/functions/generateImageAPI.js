@@ -66,9 +66,9 @@ exports.handler = async (event, context) => {
       size: size
     };
 
-    // Add AbortController for timeout handling (9 seconds to leave buffer)
+    // Add AbortController for timeout handling (24 seconds for Pro plan, with 2s buffer)
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 9000);
+    const timeout = setTimeout(() => controller.abort(), 24000);
     
     let response;
     try {
