@@ -62,11 +62,11 @@ export async function handler(event, context) {
     console.log('Starting generation at:', new Date().toISOString());
     console.log('Quality:', quality, 'Size:', size);
 
-    // Always use gpt-image-1 with low quality for faster generation
+    // Use gpt-image-1 with medium quality for better results
     let requestBody = {
       model: "gpt-image-1",
       prompt: prompt,
-      quality: 'low', // Force low quality to reduce generation time
+      quality: 'medium', // Medium quality for better generation results
       n: 1,
       size: size
     };
