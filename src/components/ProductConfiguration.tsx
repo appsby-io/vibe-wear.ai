@@ -21,7 +21,6 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
 }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  const products = ['T-Shirt', 'Sweatshirt', 'Hoodie'];
   const colors = ['White', 'Black'];
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
   const amounts = Array.from({ length: 20 }, (_, i) => i + 1);
@@ -39,14 +38,6 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
     setOpenDropdown(null);
   };
 
-  // Truncate product name for mobile
-  const truncateProductName = (productName: string) => {
-    if (productName.length > 12) {
-      return productName.substring(0, 12) + '...';
-    }
-    return productName;
-  };
-
   const Dropdown = ({ 
     label, 
     value, 
@@ -54,7 +45,6 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
     onSelect, 
     dropdownKey,
     isMobileHidden = false,
-    useTruncation = false,
     hideLabel = false
   }: {
     label: string;
@@ -63,7 +53,6 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
     onSelect: (value: string | number) => void;
     dropdownKey: string;
     isMobileHidden?: boolean;
-    useTruncation?: boolean;
     hideLabel?: boolean;
   }) => (
     <div className={`relative ${isMobileHidden ? 'hidden sm:block' : ''}`}>
@@ -76,14 +65,7 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
           <span className={hideLabel ? 'hidden sm:inline' : ''}>
             {hideLabel ? '' : `${label}: `}
           </span>
-          {useTruncation ? (
-            <>
-              <span className="sm:hidden">{truncateProductName(value.toString())}</span>
-              <span className="hidden sm:inline">{value}</span>
-            </>
-          ) : (
-            value
-          )}
+          {value}
         </span>
         <ChevronDown className={`h-4 w-4 transition-transform ${
           openDropdown === dropdownKey ? 'rotate-180' : ''
@@ -160,18 +142,8 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
       <div className="hidden lg:block bg-white border-b border-gray-100 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            {/* Desktop: all dropdowns in a row */}
+            {/* Desktop: dropdowns without product selection */}
             <div className="flex flex-wrap gap-4 items-center">
-              <Dropdown
-                label="Product"
-                value={config.product}
-                options={products}
-                onSelect={(value) => handleOptionSelect('product', value)}
-                dropdownKey="product"
-                useTruncation={true}
-                hideLabel={true}
-              />
-              
               <Dropdown
                 label="Color"
                 value={config.color}
@@ -219,18 +191,8 @@ export const ProductConfiguration: React.FC<ProductConfigurationProps> = ({
       {/* Mobile Layout - Below header, non-sticky */}
       <div className="lg:hidden bg-white border-b border-gray-100 py-4">
         <div className="px-4">
-          {/* Top row: 3 dropdowns */}
-          <div className="grid grid-cols-3 gap-2 mb-3">
-            <Dropdown
-              label="Product"
-              value={config.product}
-              options={products}
-              onSelect={(value) => handleOptionSelect('product', value)}
-              dropdownKey="product"
-              useTruncation={true}
-              hideLabel={true}
-            />
-            
+          {/* Top row: 2 dropdowns */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
             <Dropdown
               label="Color"
               value={config.color}
