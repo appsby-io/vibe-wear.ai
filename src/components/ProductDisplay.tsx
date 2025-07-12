@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Eye, Search, ExternalLink } from 'lucide-react';
 import { DesignAnalysis } from './DesignAnalysis';
 import { ImageModal } from './ImageModal';
@@ -50,6 +50,12 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
 }) => {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Reset imageLoaded when design changes
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentDesignIndex, designs]);
 
   const handlePrevious = () => {
     const newIndex = currentDesignIndex === 0 ? designs.length - 1 : currentDesignIndex - 1;
@@ -159,9 +165,14 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
               {/* Design Overlay with spring animation */}
               {shouldShowDesign && (
                 <div
-                  className="absolute cursor-pointer inset-0 flex items-center justify-center"
+                  className={`absolute cursor-pointer transition-opacity duration-300 ${
+                    imageLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
                   style={{
-                    animation: 'spring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    animation: imageLoaded ? 'spring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'none',
                   }}
                   onClick={handleDesignImageClick}
                   title={isInteractiveDesign ? "Click to view larger" : undefined}
@@ -171,6 +182,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                     alt={currentDesign.name}
                     className="object-contain hover:scale-105 transition-transform w-[120px] h-[120px] lg:w-[160px] lg:h-[160px]"
                     draggable={false}
+                    onLoad={() => setImageLoaded(true)}
                     onContextMenu={(e) => e.preventDefault()} // Prevent right-click context menu
                   />
                 </div>
