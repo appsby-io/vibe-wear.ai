@@ -56,6 +56,8 @@ exports.handler = async (event, context) => {
     }
 
     console.log('Generating image with prompt length:', prompt.length);
+    console.log('Starting generation at:', new Date().toISOString());
+    console.log('Quality:', quality, 'Size:', size);
 
     // Always use gpt-image-1 with low quality for faster generation
     let requestBody = {
@@ -83,6 +85,7 @@ exports.handler = async (event, context) => {
       });
     } catch (error) {
       if (error.name === 'AbortError') {
+        console.log('Request aborted after 24 seconds');
         return {
           statusCode: 504,
           headers: {
