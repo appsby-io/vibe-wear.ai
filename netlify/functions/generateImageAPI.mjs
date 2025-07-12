@@ -1,7 +1,7 @@
 // Regular Netlify Function for OpenAI image generation
 // This has a 10-second timeout (26 seconds on Pro plans)
 
-exports.handler = async (event, context) => {
+export async function handler(event, context) {
   console.log('Function started, Node version:', process.version);
   console.log('Environment check - API Key exists:', !!process.env.OPENAI_API_KEY_SERVER);
   
