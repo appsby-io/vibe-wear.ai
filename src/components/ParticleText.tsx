@@ -42,7 +42,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     // Add extra padding to prevent cutoff
     const padding = 120;
     canvas.width = metrics.width + padding * 2;
-    canvas.height = 100;
+    canvas.height = 40;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -169,7 +169,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
       <canvas
         ref={canvasRef}
         className="block"
-        style={{ minHeight: '100px' }}
+        style={{ minHeight: '40px' }}
       />
     </div>
   );

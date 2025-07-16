@@ -240,8 +240,8 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
               {isGenerating && (
                 <div className="absolute inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center">
                   <div className="text-center">
-                    {/* Lottie Crab Animation - Properly centered and sized */}
-                    <div className="mb-4 flex items-center justify-center">
+                    {/* Lottie Crab Animation - Reduced bottom margin */}
+                    <div className="mb-1 flex items-center justify-center">
                       <div className="w-36 h-36 flex items-center justify-center">
                         <LottieLoadingAnimation size={140} />
                       </div>
@@ -252,10 +252,10 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                       className="text-gray-700 font-semibold font-source-sans text-lg"
                       duration={1200}
                     />
-                    <p className="text-gray-500 font-source-sans text-sm mt-2">Using advanced AI • This may take 5 to 20 seconds</p>
+                    <p className="text-gray-500 font-source-sans text-sm">Using advanced AI • This may take 5 to 20 seconds</p>
                     
                     {/* Animated dots */}
-                    <div className="mt-4 flex items-center justify-center space-x-2">
+                    <div className="mt-2 flex items-center justify-center space-x-2">
                       <div className="w-2 h-2 bg-vibrant-pink rounded-full animate-bounce"></div>
                       <div className="w-2 h-2 bg-vibrant-pink rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                       <div className="w-2 h-2 bg-vibrant-pink rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
