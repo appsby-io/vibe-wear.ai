@@ -1,5 +1,5 @@
 // Regular Netlify Function for OpenAI image generation
-// This has a 10-second timeout (26 seconds on Pro plans)
+// This has a 30-second timeout on Pro plans
 
 export async function handler(event, context) {
   console.log('Function started, Node version:', process.version);
@@ -62,18 +62,18 @@ export async function handler(event, context) {
     console.log('Starting generation at:', new Date().toISOString());
     console.log('Quality:', quality, 'Size:', size);
 
-    // Use gpt-image-1 with low quality until 26-second timeout is activated
+    // Use gpt-image-1 with medium quality
     let requestBody = {
       model: "gpt-image-1",
       prompt: prompt,
-      quality: 'low', // Low quality to avoid timeouts (switch to medium after Netlify enables 26s)
+      quality: 'medium', // Medium quality for better results
       n: 1,
       size: size
     };
 
-    // Add AbortController for timeout handling (24 seconds for Pro plan, with 2s buffer)
+    // Add AbortController for timeout handling (28 seconds, with 2s buffer for 30s limit)
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 24000);
+    const timeout = setTimeout(() => controller.abort(), 28000);
     
     let response;
     try {
@@ -88,7 +88,7 @@ export async function handler(event, context) {
       });
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('Request aborted after 24 seconds');
+        console.log('Request aborted after 28 seconds');
         return {
           statusCode: 504,
           headers: {
@@ -96,7 +96,7 @@ export async function handler(event, context) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ 
-            error: 'Image generation is taking too long. Please try with a simpler prompt or use standard quality.',
+            error: 'Image generation is taking too long. Please try with a simpler prompt.',
             timeout: true
           })
         };
