@@ -4,6 +4,28 @@ import { validatePrompt } from '../utils/imageGeneration';
 import { ga } from '../lib/ga';
 import { useFeature } from '../store/useFeature';
 
+// Style name mapping
+const getStyleName = (styleId: string): string => {
+  const styleNames: Record<string, string> = {
+    'graffiti': 'Graffiti',
+    'graffiti-2': 'Graffiti 2',
+    'y2k-chrome': 'Y2K Chrome',
+    'inspirational-quote': 'Inspirational Quote',
+    'kawaii-skull': 'Kawaii Skull',
+    'realistic': 'Realistic',
+    'black-and-white': 'Black & White',
+    'halftone-brutalism': 'Halftone Brutalism',
+    'vector-stencil': 'Vector Stencil',
+    'grunge': 'Grunge',
+    'comic': 'Comic',
+    'watercolor': 'Watercolor',
+    'cartoon-avatar': 'Cartoon Avatar',
+    'childrens-book': "Children's Book",
+    'vintage-stamp': 'Vintage Stamp',
+  };
+  return styleNames[styleId] || styleId;
+};
+
 interface AIGeneratorProps {
   onGenerate: (prompt: string, styleOverride?: string, referenceImage?: string) => void;
   isGenerating: boolean;
@@ -398,12 +420,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
               </div>
             )}
 
-            {/* Quality indicator with beta notice */}
+            {/* Style indicator */}
             {selectedStyle && isApiKeyAvailable && canGenerate && (
               <div className="mt-4 flex items-center justify-center">
-                <div className="inline-flex items-center px-4 py-2 bg-vibrant-pink/10 rounded-full">
-                  <span className="text-vibrant-pink text-sm font-medium font-source-sans">
-                    You are using the BETA version. Please join our waiting list.
+                <div className="inline-flex items-center px-4 py-2 bg-green-500/10 rounded-full">
+                  <span className="text-green-600 text-sm font-medium font-source-sans">
+                    Style {getStyleName(selectedStyle)} active
                   </span>
                 </div>
               </div>
