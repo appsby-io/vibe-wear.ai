@@ -1,5 +1,6 @@
 // src/utils/imageGeneration.ts
 // import { logPromptToDatabase } from './promptLogger'; // Temporarily disabled
+import { useFeatureStore } from '../store/useFeature';
 
 // Validation function for prompts
 export function validatePrompt(prompt: string): { valid: boolean; error?: string } {
@@ -32,52 +33,65 @@ export function validatePrompt(prompt: string): { valid: boolean; error?: string
   return { valid: true };
 }
 
-const contentGuidelines = "no offensive content, no copyrighted images, no real people or celebrities";
+const contentGuidelines = "no offensive content, no copyrighted images, no real people or celebrities, no t-shirt mockup";
 
 // T-shirt optimized style prompts
 const STYLE_PROMPTS: Record<string, string> = {
   cartoonblocks: "Vector-style 3D cartoon t-shirt design. Simplified blocky character as the main focal point, isolated on minimal background. Bold, chunky shapes with flat colors - bright primary colors that pop. Clean black outlines, no complex shading. Character takes up 70% of composition. Perfect for screen printing on apparel. No photorealism, no gradients, no complex backgrounds.",
   
-  cyberpunk: "Bold cyberpunk t-shirt graphic design. Main subject with neon glow effects - cyan, magenta, electric blue accents. High contrast design with deep blacks and bright neons. Simplified futuristic elements, clean vector-style illustration. Subject isolated on dark or minimal background. Strong silhouette that reads well on fabric. No complex environments, focus on iconic cyberpunk imagery.",
+  "halftone-brutalism": "editorial geometric collage style with surrealist black-and-yellow duotone. Bold monochrome contrast (charcoal black & industrial yellow), grainy halftone textures, overexposed elements, minimal geometric overlays, magazine-cutout feel. Retro-futuristic and conceptual, evoking underground zine aesthetics.",
   
-  comic: "Vintage comic book style t-shirt design. Bold illustration with thick black ink outlines, flat colors, halftone dot patterns. Dynamic character or subject as focal point. Limited color palette - primary colors plus black. Clean, readable design that works at any size. Isolated subject on simple background. Comic book aesthetic without complex panels or environments.",
+  comic: "Create a single-panel vintage comic scene with a bold black frame and a slight off-white page tint. Charming characters like Studio Ghibli and modern Pokemon style.Use crisp, thick ink outlines, dramatic speed-lines, and a limited retro palette (sky-blue background, white, warm ochre desert ground, sandy highlights, and halftone shading). Keep the overall vibe playful, 1980s manga-inspired pokemon & digimon style, with subtle paper grain and slightly muted colors for a classic printed-comic feel.",
   
-  watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
+  watercolor: "Artistic watercolor t-shirt design. Main subject rendered in soft pastel watercolor style with visible brush strokes. Limited color bleeds, controlled paint effects. Subject stands out clearly despite artistic style. Minimal or white background for easy printing. Balance between artistic expression and t-shirt wearability. No muddy colors or overly complex washes.",
   
-  realistic: "Photorealistic t-shirt design with isolated subject. High-detail rendering of main element only. Strong contrast and clear focal point. Subject appears to 'pop' off the shirt. Minimal or removable background. Professional quality suitable for direct-to-garment printing. Focus on one impressive realistic element rather than complex scenes.",
+  realistic: "Photorealistic image of the subject only, highly detailed and lifelike. Sharp focus, professional photography style. clean, minimal background. High contrast and vibrant colors. No t-shirt mockup. Professional quality suitable for direct-to-garment printing.",
   
-  "black-and-white": "High contrast black and white t-shirt design. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). Perfect for single-color screen printing. Clean, striking design that works on any color garment.",
+  "black-and-white": "Black and white vintage photograph. Highly detailed, sharp focus, lighting with strong shadows. High contrast monochrome, retro aesthetic, centered composition. No t-shirt mockup, just the image itself. Clean, striking isolated subject.",
+
+  "vector-stencil": "High contrast black and white stencil art of the subject only. Bold graphic with strong silhouette. Uses only pure black and white - no grays. Dramatic shadows and highlights. Subject isolated on opposite color background (black on white or white on black). No t-shirt mockup, just the design element itself. Perfect for single-color screen printing.",
   
-  botanical: "Elegant botanical t-shirt design. Hand-drawn style illustration of plants/flowers as main subject. Clean line work with minimal shading. Scientific illustration aesthetic but simplified for apparel. Centered composition with botanical element as hero. Works well on light or dark garments. No complex backgrounds, focus on botanical beauty.",
+  // botanical: "Black and White Monochrome graphite line illustration of the subject, posed like a 19th-century natural-history plate. Clean continuous strokes with even line width, subtle cross-hatching and micro-stippling for shading, no solid fills. Surrounded by a botanical wreath of slender leaves and simple five-petal flowers with balanced negative space. Flat vector output. No t-shirt mockup, just the design element itself.",
+  
+  "vintage-stamp": "Write {TEXT} on {MOTIVE} graphic, vintage tee illustration, hand-drawn linework, faded ink texture, retro 70s style, circular outline badge layout, bold serif lettering, two-tone color scheme (navy + beige), flat print-style graphic, distressed screenprint stemp look",
   
   "cartoon-avatar": "Fun cartoon character t-shirt design. Single character with exaggerated features, big personality. Bold outlines, flat colors, minimal shading. Character isolated on simple background. Expressive and memorable design. Works like a logo or mascot on apparel. Clean vector style that scales well.",
   
-  "childrens-book": "Whimsical children's illustration style t-shirt design. Soft, friendly character or scene. Limited pastel color palette. Simple, joyful design that appeals to all ages. Main subject clearly defined. Minimal background elements. Hand-drawn quality but clean enough for printing. Positive, uplifting imagery.",
+  "childrens-book": "Charming Hand-painted watercolor children's book illustration style t-shirt design. warm, earthy palette (soft ochre, muted teal, dust-rose blush), simple rounded shapes, no hard outlines, gentle wet-in-wet shading, visible cold-press paper grain, mid-century storybook vibe, full-body pose, playful and friendly character or scene. Limited pastel color palette. Main subject clearly defined. Minimal background elements. Hand-drawn quality but clean enough for printing. Positive, uplifting imagery.",
   
   grunge: "Edgy grunge t-shirt design. Distressed textures on main graphic element. High contrast - primarily black with accent colors. Raw, rebellious aesthetic. Bold central image with rough edges. Vintage band t-shirt inspired. Works well on black or dark colored shirts. Strong visual impact.",
   
-  "vintage-comic": "Retro comic book t-shirt design in black and white. Bold ink style illustration. Heavy shadows, dynamic poses. Single powerful image, not a full comic panel. High contrast for impactful design. Works like vintage band merch or retro poster art. Clean composition despite detailed linework."
+  "y2k-chrome": "Oversized slogan in chunky chrome liquid bubble letters, with dropping liquid, holographic pink-lilac-cyan gradient, tiny star sparkles, soft drop shadow, white background, flat vector, 1999 desktop aesthetic.",
+  
+  graffiti: "One-word slogan in lime-green graffiti bubble letters, heavy black outline, red paint-splat drip shape behind, clean white background.",
+  
+  "graffiti-2": "Tag-style script with soft electric-blue and white inner glow, spray-paint overspray.",
+  
+  "inspirational-quote": "Motivational quote in decorative hand-lettered typography. Mixed typefaces (script, serif, sans-serif), curved text lines, swashes, banners, stars, and playful accents. White lettering on dark background, vintage chalkboard or sign-painting aesthetic. Centered layout, high readability, clean and ornamental.",
+  
+  "kawaii-skull": "Kawaii skull-and-sprinkles frame around {TEXT}, yellow & mint palette, chunky black outline, soft drop shadow, off-white background.",
 };
 
 // T-shirt design technical specifications
-const technicalSpecs = "High resolution vector-style design, professional quality optimized for t-shirt printing, centered composition with clean edges. Subject isolated and prominent, taking up 60-80% of the frame. Simple, clean background that can be easily removed. No complex backgrounds, no photographic backgrounds, no gradients in background. Bold, clear design elements suitable for screen printing or DTG printing.";
+const technicalSpecs = "High resolution design, professional quality optimized for t-shirt printing, centered composition with clean edges. Subject isolated and prominent, taking up 60-80% of the frame. Simple, clean background that can be easily removed. No complex backgrounds, no gradients in background. Bold, clear design elements suitable for screen printing or DTG printing.";
 
 // Additional t-shirt design guidelines
 const tshirtDesignGuidelines = "Create a design that works as a standalone graphic on apparel. Focus on the main subject with high contrast. Use bold, confident strokes and shapes. Ensure design reads well from a distance. Avoid tiny details that won't print well. Design should be eye-catching and memorable.";
 
 // Common t-shirt design issues to avoid
-const avoidancePrompt = "AVOID: photographic backgrounds, complex gradients in background, multiple scattered elements, text unless specifically requested, realistic environments, busy compositions. FOCUS ON: single strong focal point, clean composition, bold graphics.";
+const avoidancePrompt = "AVOID: backgrounds unless specifically requested, complex gradients in background, multiple scattered elements, text unless specifically requested, realistic environments, busy compositions. FOCUS ON: single strong focal point, clean composition, bold graphics.";
+
 
 function getBackgroundInstruction(productColor: string): string {
   const colorLower = productColor.toLowerCase();
   
   // T-shirt specific design instructions based on garment color
   if (colorLower.includes('black')) {
-    return "T-shirt design for BLACK garment: Subject isolated on minimal dark background for easy removal. Use bright, vibrant colors (white, neon, pastels) that pop against black fabric. Strong contrast is essential. Bold graphic with light elements. Avoid dark colors that disappear on black shirts. Design should glow against dark background.";
+    return "T-shirt design for BLACK garment: Subject isolated on minimal dark background for easy removal. Use bright, vibrant colors (white, neon, pastels) that pop against black fabric. Strong contrast is essential. Bold motif with light elements. Avoid dark colors that disappear on black shirts. Design should glow against dark background.";
   } else if (colorLower.includes('white')) {
-    return "T-shirt design for WHITE garment: Subject isolated on minimal light background for easy removal. Use bold, saturated colors and strong black outlines that stand out on white fabric. Rich, deep colors work best. Avoid light pastels or white elements that vanish on white shirts. High contrast graphic design.";
+    return "T-shirt design for WHITE garment: Subject isolated on minimal light background for easy removal. Design should stand out on white fabric. Avoid light pastels or white elements that vanish on white shirts. High contrast design.";
   } else {
-    return "T-shirt design for COLORED garment: Subject isolated on neutral background for easy removal. Use high contrast colors that complement the shirt color. Strong, bold design that remains visible. Consider both light and dark elements for versatility. Clear, impactful graphic that works on colored fabric.";
+    return "T-shirt design for COLORED garment: Subject isolated on neutral background for easy removal. Use high contrast colors that complement the shirt color. Strong, bold design that remains visible. Consider both light and dark elements for versatility. Clear, impactful motif that works on colored fabric.";
   }
 }
 
@@ -96,10 +110,7 @@ function preprocessPromptForTshirt(userPrompt: string): string {
   
   // Replace problematic phrases
   processed = processed
-    .replace(/photo of/gi, 'illustration of')
-    .replace(/photograph of/gi, 'design of')
     .replace(/picture of/gi, 'graphic of')
-    .replace(/realistic photo/gi, 'detailed illustration')
     .replace(/in a forest/gi, 'with decorative forest elements')
     .replace(/in the city/gi, 'with urban design elements')
     .replace(/at the beach/gi, 'with beach-themed elements');
@@ -169,7 +180,7 @@ export async function generateDesign(
   prompt: string,
   style: string,
   productColor: string,
-  quality: 'low' | 'hd' = 'low',
+  quality: 'low' | 'medium' | 'hd' = 'medium',
   referenceImage?: string
 ): Promise<GenerationResult> {
   let imageAnalysis: string | null = null;
@@ -204,15 +215,23 @@ export async function generateDesign(
 
     console.log('Enhanced prompt (gpt-image-1):', enhancedPrompt);
 
-    // Use Netlify edge function for secure image generation
-    const response = await fetch('/.netlify/edge-functions/generateImage', {
+    // Check if we should use regular functions (longer timeout) or edge functions
+    const useRegularFunctions = useFeatureStore.getState().getFeature('useRegularFunctions');
+    const endpoint = useRegularFunctions 
+      ? '/.netlify/functions/generateImageAPI'
+      : '/.netlify/edge-functions/generateImage';
+    
+    console.log(`Using ${useRegularFunctions ? 'regular' : 'edge'} function:`, endpoint);
+
+    // Use Netlify function for secure image generation
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         prompt: enhancedPrompt,
-        quality: quality === 'hd' ? 'hd' : 'standard',
+        quality: quality === 'hd' ? 'high' : quality === 'low' ? 'low' : 'medium',
         size: "1024x1024"
         // Note: Not sending referenceImage to avoid payload size issues
         // OpenAI doesn't support reference images anyway
@@ -238,6 +257,14 @@ export async function generateDesign(
             errorMessage = 'Too many requests. Please wait a moment and try again.';
           } else if (response.status === 401 || response.status === 403) {
             errorMessage = 'Authentication failed. Please check your API access.';
+          } else if (response.status === 502) {
+            errorMessage = 'Server error. The image generation service is temporarily unavailable. Please try again in a few seconds.';
+          } else if (response.status === 504 || errorData.error?.includes('timeout')) {
+            errorMessage = 'Request timed out. Image generation is taking longer than expected. Please try again with a simpler prompt.';
+          } else if (response.status === 507 || errorData.error?.includes('too large')) {
+            errorMessage = 'Generated image is too large. Try using standard quality instead of HD to reduce file size.';
+          } else if (response.status === 413) {
+            errorMessage = 'Request too large. Please try with a smaller reference image or simpler prompt.';
           } else if (errorData.error) {
             // Show the actual error from the API
             errorMessage = errorData.error;

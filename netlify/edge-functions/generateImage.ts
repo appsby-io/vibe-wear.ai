@@ -8,6 +8,7 @@ declare global {
   };
 }
 
+// Deno has these APIs natively, but we need to ensure proper error handling
 export default async (req: Request) => {
   // Handle CORS
   if (req.method === 'OPTIONS') {
@@ -22,6 +23,21 @@ export default async (req: Request) => {
   }
 
   try {
+    // Check request size before parsing
+    const contentLength = req.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > 6 * 1024 * 1024) {
+      return new Response(
+        JSON.stringify({ error: 'Request too large. Maximum size is 6MB.' }),
+        { 
+          status: 413,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      );
+    }
+    
     // Read the request JSON
     let requestData;
     try {
@@ -149,7 +165,50 @@ export default async (req: Request) => {
 
     // Forward the JSON payload ({ created, data:[{url|b64_json}] })
     const data = await apiRes.json();
-    return new Response(JSON.stringify(data), {
+    
+    // Try to stringify the response to check size
+    let responseString;
+    try {
+      responseString = JSON.stringify(data);
+      const responseSizeKB = Math.round(responseString.length / 1024);
+      console.log('Response size:', responseSizeKB, 'KB');
+      
+      // Netlify Edge Functions have a 6MB response limit
+      if (responseString.length > 5 * 1024 * 1024) {
+        console.error('Response too large:', responseSizeKB, 'KB');
+        return new Response(
+          JSON.stringify({ 
+            error: 'Generated image is too large. Try using standard quality instead of HD.',
+            size: responseSizeKB + 'KB'
+          }),
+          { 
+            status: 507, // Insufficient Storage
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+            }
+          }
+        );
+      }
+    } catch (stringifyError) {
+      console.error('Failed to stringify response:', stringifyError);
+      // If we can't stringify, it's likely too large or has issues
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to process image response. The image may be too large.',
+          details: 'Stringify failed'
+        }),
+        { 
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      );
+    }
+    
+    return new Response(responseString, {
       headers: { 
         "content-type": "application/json",
         'Access-Control-Allow-Origin': '*',
@@ -158,10 +217,27 @@ export default async (req: Request) => {
 
   } catch (error) {
     console.error('Edge function error:', error);
+    
+    // More detailed error handling for debugging
+    let errorMessage = 'Internal server error';
+    let errorDetails = 'Unknown error';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorDetails = error.stack || error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+      errorDetails = error;
+    } else if (error && typeof error === 'object') {
+      errorMessage = JSON.stringify(error);
+      errorDetails = errorMessage;
+    }
+    
     return new Response(
       JSON.stringify({ 
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: errorMessage,
+        details: errorDetails,
+        type: error?.constructor?.name || 'Unknown'
       }),
       { 
         status: 500,

@@ -1,14 +1,20 @@
 import React from 'react';
-import StyleCyberpunk from '../assets/style_cyberpunk copy.jpg';
+import StyleHalftoneBrutalism from '../assets/style_halftone_brutalism.jpg';
 import StyleComic from '../assets/style_comic copy.jpg';
 import StyleWatercolor from '../assets/style_watercolor copy.jpg';
 import StyleBlackAndWhite from '../assets/style_black_and_white.jpg';
-import StyleBotanical from '../assets/style_botanical.jpg';
+// import StyleBotanical from '../assets/style_botanical.jpg';
+import StyleVintageStamp from '../assets/style_stemp.jpg';
 import StyleCartoonAvatar from '../assets/style_cartoon_avatar.jpg';
 import StyleChildrensBook from '../assets/style_childrens_book.jpg';
 import StyleGrunge from '../assets/style_grunge.jpg';
 import StyleRealistic from '../assets/style_realistic.jpg';
-import StyleVintageComic from '../assets/style_vintage_comic.jpg';
+import StyleStencil from '../assets/style_stencil.jpg';
+import StyleY2KChrome from '../assets/style_y2k-chrome.jpg';
+import StyleGraffiti from '../assets/style_graffiti.jpg';
+import StyleGraffiti2 from '../assets/style_graffiti_2.jpg';
+import StyleInspirationalQuote from '../assets/style_inspirational_quote.jpg';
+import StyleKawaii from '../assets/style_kawaii.jpg';
 
 interface Style {
   id: string;
@@ -27,7 +33,37 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
   onStyleSelect,
 }) => {
   const styles: Style[] = [
-    // Row 1: Realistic, Black & White, Cyberpunk, Grunge, Vintage Comic
+    // New order as specified
+    {
+      id: 'graffiti',
+      name: 'Graffiti',
+      description: 'Bold street art vibes',
+      previewUrl: StyleGraffiti,
+    },
+    {
+      id: 'graffiti-2',
+      name: 'Graffiti 2',
+      description: 'Tag-style electric blue script',
+      previewUrl: StyleGraffiti2,
+    },
+    {
+      id: 'y2k-chrome',
+      name: 'Y2K Chrome',
+      description: 'Chrome liquid bubble letters',
+      previewUrl: StyleY2KChrome,
+    },
+    {
+      id: 'inspirational-quote',
+      name: 'Inspirational Quote',
+      description: 'Hand-lettered typography',
+      previewUrl: StyleInspirationalQuote,
+    },
+    {
+      id: 'kawaii-skull',
+      name: 'Kawaii Skull',
+      description: 'Cute skull with sprinkles',
+      previewUrl: StyleKawaii,
+    },
     {
       id: 'realistic',
       name: 'Realistic',
@@ -41,10 +77,16 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       previewUrl: StyleBlackAndWhite,
     },
     {
-      id: 'cyberpunk',
-      name: 'Cyberpunk',
-      description: 'Futuristic neon aesthetics',
-      previewUrl: StyleCyberpunk,
+      id: 'halftone-brutalism',
+      name: 'Halftone Brutalism',
+      description: 'Black & yellow editorial style',
+      previewUrl: StyleHalftoneBrutalism,
+    },
+    {
+      id: 'vector-stencil',
+      name: 'Vector Stencil',
+      description: 'High contrast stencil art',
+      previewUrl: StyleStencil,
     },
     {
       id: 'grunge',
@@ -52,13 +94,24 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       description: 'Raw rock poster style',
       previewUrl: StyleGrunge,
     },
+    // {
+    //   id: 'botanical',
+    //   name: 'Botanical',
+    //   description: 'Hand-drawn botanical art',
+    //   previewUrl: StyleBotanical,
+    // },
     {
-      id: 'vintage-comic',
-      name: 'Vintage Comic',
-      description: 'Classic black & white comic',
-      previewUrl: StyleVintageComic,
+      id: 'vintage-stamp',
+      name: 'Vintage Stamp',
+      description: 'Retro 70s badge style',
+      previewUrl: StyleVintageStamp,
     },
-    // Row 2: Comic, Cartoon Avatar, Watercolor, Children's Book, Botanical
+    {
+      id: 'watercolor',
+      name: 'Watercolor',
+      description: 'Soft artistic watercolor style',
+      previewUrl: StyleWatercolor,
+    },
     {
       id: 'comic',
       name: 'Comic',
@@ -72,30 +125,11 @@ export const StyleSelection: React.FC<StyleSelectionProps> = ({
       previewUrl: StyleCartoonAvatar,
     },
     {
-      id: 'watercolor',
-      name: 'Watercolor',
-      description: 'Soft artistic watercolor style',
-      previewUrl: StyleWatercolor,
-    },
-    {
       id: 'childrens-book',
       name: "Children's Book",
       description: 'Whimsical storybook style',
       previewUrl: StyleChildrensBook,
     },
-    {
-      id: 'botanical',
-      name: 'Botanical',
-      description: 'Hand-drawn botanical art',
-      previewUrl: StyleBotanical,
-    },
-    // Temporarily commented out - keeping for future use
-    // {
-    //   id: 'graffiti',
-    //   name: 'Graffiti',
-    //   description: 'Bold street art vibes',
-    //   previewUrl: StyleGraffiti,
-    // },
   ];
 
   return (

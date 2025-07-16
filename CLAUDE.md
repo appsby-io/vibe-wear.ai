@@ -50,6 +50,10 @@
   - gpt-image-1: 'low', 'medium', 'high', 'auto'
 - The edge function is deployed at `/.netlify/edge-functions/generateImage`
 
+#### Image Generation Quality Strategy:
+- Use high quality only if users want to go to checkout
+- Use low or medium quality for standard image generation
+
 #### Commands to Run:
 ```bash
 # When returning to this work:
@@ -227,3 +231,4 @@ git push origin test
 - Reference image UI: `/src/components/AIGenerator.tsx` - line 34, 119-125, 228-237
 - Style analysis: `/netlify/edge-functions/analyzeImage.ts`
 - Analysis docs: `/REFERENCE_IMAGE_ANALYSIS.md`
+```

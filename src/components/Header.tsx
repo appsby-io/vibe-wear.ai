@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { User, ShoppingCart } from 'lucide-react';
 import Logo from '../assets/logo.svg';
 import { ga } from '../lib/ga';
@@ -16,13 +16,6 @@ export const Header: React.FC<HeaderProps> = ({
   onLogoClick, 
   onFeatureClick 
 }) => {
-  const [showTooltip, setShowTooltip] = useState<string | null>(null);
-
-  const handleTooltipClick = (buttonType: string) => {
-    setShowTooltip(buttonType);
-    setTimeout(() => setShowTooltip(null), 2000);
-  };
-
   const handleCartClick = () => {
     ga.trackFeatureClick('cart');
     if (onFeatureClick) {
@@ -30,9 +23,8 @@ export const Header: React.FC<HeaderProps> = ({
     }
     if (cartCount > 0 && onCartClick) {
       onCartClick();
-    } else {
-      handleTooltipClick('cart');
     }
+    // Removed tooltip for empty cart - waitlist modal will handle it
   };
 
   const handleProfileClick = () => {
@@ -40,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({
     if (onFeatureClick) {
       onFeatureClick('profile');
     }
-    handleTooltipClick('profile');
+    // Removed tooltip - waitlist modal will handle it
   };
 
   const handleLogoClick = () => {
@@ -72,12 +64,6 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <User className="h-6 w-6" />
               </button>
-              {showTooltip === 'profile' && (
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                  Coming soon 🦘
-                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                </div>
-              )}
             </div>
             
             <div className="relative">
@@ -94,12 +80,6 @@ export const Header: React.FC<HeaderProps> = ({
                   </span>
                 )}
               </button>
-              {showTooltip === 'cart' && cartCount === 0 && (
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                  Add items to cart first 🛒
-                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                </div>
-              )}
             </div>
           </div>
         </div>

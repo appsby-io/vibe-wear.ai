@@ -4,6 +4,28 @@ import { validatePrompt } from '../utils/imageGeneration';
 import { ga } from '../lib/ga';
 import { useFeature } from '../store/useFeature';
 
+// Style name mapping
+const getStyleName = (styleId: string): string => {
+  const styleNames: Record<string, string> = {
+    'graffiti': 'Graffiti',
+    'graffiti-2': 'Graffiti 2',
+    'y2k-chrome': 'Y2K Chrome',
+    'inspirational-quote': 'Inspirational Quote',
+    'kawaii-skull': 'Kawaii Skull',
+    'realistic': 'Realistic',
+    'black-and-white': 'Black & White',
+    'halftone-brutalism': 'Halftone Brutalism',
+    'vector-stencil': 'Vector Stencil',
+    'grunge': 'Grunge',
+    'comic': 'Comic',
+    'watercolor': 'Watercolor',
+    'cartoon-avatar': 'Cartoon Avatar',
+    'childrens-book': "Children's Book",
+    'vintage-stamp': 'Vintage Stamp',
+  };
+  return styleNames[styleId] || styleId;
+};
+
 interface AIGeneratorProps {
   onGenerate: (prompt: string, styleOverride?: string, referenceImage?: string) => void;
   isGenerating: boolean;
@@ -315,21 +337,23 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  <button
-                    type="button"
-                    onClick={handleImageClick}
-                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
-                    title="Upload reference image"
-                  >
-                    <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
-                    <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
-                  </button>
-                  {showTooltip === 'image_upload' && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                      Coming soon 🦘
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                    </div>
-                  )}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={handleImageClick}
+                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
+                      title="Upload reference image"
+                    >
+                      <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                      <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
+                    </button>
+                    {showTooltip === 'image_upload' && (
+                      <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
+                        Coming soon 🦘
+                        <div className="absolute top-full right-2 w-2 h-2 bg-black rotate-45"></div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Generate button - right aligned */}
@@ -396,12 +420,12 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
               </div>
             )}
 
-            {/* Quality indicator with beta notice */}
+            {/* Style indicator */}
             {selectedStyle && isApiKeyAvailable && canGenerate && (
               <div className="mt-4 flex items-center justify-center">
-                <div className="inline-flex items-center px-4 py-2 bg-vibrant-pink/10 rounded-full">
-                  <span className="text-vibrant-pink text-sm font-medium font-source-sans">
-                    You are using the BETA version. Please join our waiting list.
+                <div className="inline-flex items-center px-4 py-2 bg-green-500/10 rounded-full">
+                  <span className="text-green-600 text-sm font-medium font-source-sans">
+                    Style {getStyleName(selectedStyle)} active
                   </span>
                 </div>
               </div>
@@ -496,21 +520,23 @@ export const AIGenerator: React.FC<AIGeneratorProps> = ({
                     )}
                   </div>
                   
-                  <button
-                    type="button"
-                    onClick={handleImageClick}
-                    className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
-                    title="Upload reference image"
-                  >
-                    <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
-                    <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
-                  </button>
-                  {showTooltip === 'image_upload' && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
-                      Coming soon 🦘
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-black rotate-45"></div>
-                    </div>
-                  )}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={handleImageClick}
+                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all relative overflow-hidden group"
+                      title="Upload reference image"
+                    >
+                      <ImageIcon className="h-4 w-4 text-gray-600 group-hover:text-vibrant-pink transition-colors" />
+                      <div className="absolute inset-0 bg-vibrant-pink opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
+                    </button>
+                    {showTooltip === 'image_upload' && (
+                      <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-sm rounded-lg whitespace-nowrap z-50">
+                        Coming soon 🦘
+                        <div className="absolute top-full right-2 w-2 h-2 bg-black rotate-45"></div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Generate button - right aligned */}

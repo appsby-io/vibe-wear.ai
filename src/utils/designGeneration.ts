@@ -19,7 +19,7 @@ export const handleDesignGeneration = async (
   
   try {
     const styleToUse = styleOverride || selectedStyle || 'realistic';
-    const result = await generateDesign(prompt, styleToUse, productConfig.color, 'low', referenceImage);
+    const result = await generateDesign(prompt, styleToUse, productConfig.color, 'medium', referenceImage);
     
     if (result.success) {
       const newDesign: Design = {

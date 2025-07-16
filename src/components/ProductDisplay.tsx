@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Eye, Search, ExternalLink } from 'lucide-react';
 import { DesignAnalysis } from './DesignAnalysis';
 import { ImageModal } from './ImageModal';
 import { LottieLoadingAnimation } from './LottieLoadingAnimation';
+import { ParticleText } from './ParticleText';
 import { ga } from '../lib/ga';
 import PremiumCottonTee from '../assets/premium_cotton_tee.jpg';
 import PremiumCottonSweatshirt from '../assets/premium_cotton_sweatshirt.jpg';
@@ -38,6 +39,24 @@ interface ProductDisplayProps {
   onImageViewLarge?: () => void;
 }
 
+const LOADING_MESSAGES = [
+  'Doing some magic…',
+  'Stitching pixels together…',
+  'Reading your vibe…',
+  'Consulting the AI muse…',
+  'Mocking up the masterpiece…',
+  'Wrapping it in drip…',
+  'Thinking in cotton…',
+  'Sharpening the outlines…',
+  'Polishing the pixels…',
+  'Locking in the look…',
+  'Giving main character energy…',
+  'Injecting certified drip…',
+  'Manifesting your fit…',
+  'Calling in the style gods…',
+  'Making it lowkey fire…'
+];
+
 export const ProductDisplay: React.FC<ProductDisplayProps> = ({
   designs,
   currentDesignIndex,
@@ -50,6 +69,41 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
 }) => {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
+
+  // Get current design early for use in effects
+  const currentDesign = designs[currentDesignIndex];
+
+  // Reset imageLoaded when switching between existing designs
+  useEffect(() => {
+    setImageLoaded(false);
+    // Check if image is already cached/loaded
+    if (currentDesign && currentDesign.imageUrl && currentDesign.id !== 'default') {
+      const img = new Image();
+      img.src = currentDesign.imageUrl;
+      if (img.complete) {
+        setImageLoaded(true);
+      }
+    }
+  }, [currentDesignIndex, currentDesign]);
+
+  // Rotate loading messages when generating
+  useEffect(() => {
+    if (isGenerating) {
+      // Set initial random message
+      const randomIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
+      setLoadingMessage(LOADING_MESSAGES[randomIndex]);
+
+      // Change message every 4 seconds
+      const interval = setInterval(() => {
+        const newIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
+        setLoadingMessage(LOADING_MESSAGES[newIndex]);
+      }, 4000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating]);
 
   const handlePrevious = () => {
     const newIndex = currentDesignIndex === 0 ? designs.length - 1 : currentDesignIndex - 1;
@@ -97,7 +151,6 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
     }
   };
 
-  const currentDesign = designs[currentDesignIndex];
   const showSlider = designs.length >= 2;
   
   // Always show design if available and not generating
@@ -145,11 +198,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
           {/* Product Display */}
           <div className="relative">
             <div 
-              className="relative bg-white rounded-2xl overflow-hidden"
-              style={{ 
-                width: 'auto',
-                height: window.innerWidth < 1024 ? '360px' : '560px' 
-              }}
+              className="relative bg-white rounded-2xl overflow-hidden h-[360px] lg:h-[560px]"
             >
               {/* Product Base */}
               <div className="w-full h-full bg-white flex items-center justify-center">
@@ -163,12 +212,14 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
               {/* Design Overlay with spring animation */}
               {shouldShowDesign && (
                 <div
-                  className="absolute cursor-pointer animate-bounce"
+                  className={`absolute cursor-pointer transition-opacity duration-300 ${
+                    imageLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
                   style={{
                     left: '50%',
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
-                    animation: 'spring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                    animation: imageLoaded ? 'spring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'none',
                   }}
                   onClick={handleDesignImageClick}
                   title={isInteractiveDesign ? "Click to view larger" : undefined}
@@ -176,12 +227,10 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                   <img
                     src={currentDesign.imageUrl}
                     alt={currentDesign.name}
-                    className="object-contain hover:scale-105 transition-transform"
-                    style={{ 
-                      width: window.innerWidth < 1024 ? '120px' : '160px', 
-                      height: window.innerWidth < 1024 ? '120px' : '160px' 
-                    }}
+                    className="object-contain hover:scale-105 transition-transform w-[120px] h-[120px] lg:w-[160px] lg:h-[160px]"
                     draggable={false}
+                    onLoad={() => setImageLoaded(true)}
+                    onError={() => setImageLoaded(true)} // Show image even on error
                     onContextMenu={(e) => e.preventDefault()} // Prevent right-click context menu
                   />
                 </div>
@@ -191,18 +240,22 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
               {isGenerating && (
                 <div className="absolute inset-0 bg-white/95 backdrop-blur-sm flex items-center justify-center">
                   <div className="text-center">
-                    {/* Lottie Crab Animation - Properly centered and sized */}
-                    <div className="mb-4 flex items-center justify-center">
+                    {/* Lottie Crab Animation - Reduced bottom margin */}
+                    <div className="mb-1 flex items-center justify-center">
                       <div className="w-36 h-36 flex items-center justify-center">
                         <LottieLoadingAnimation size={140} />
                       </div>
                     </div>
                     
-                    <p className="text-gray-700 font-semibold font-source-sans text-lg">Creating Design...</p>
-                    <p className="text-gray-500 font-source-sans text-sm mt-2">Using advanced AI • This may take 15-45 seconds</p>
+                    <ParticleText 
+                      text={loadingMessage} 
+                      className="text-gray-700 font-semibold font-source-sans text-lg"
+                      duration={1200}
+                    />
+                    <p className="text-gray-500 font-source-sans text-sm">Using advanced AI • This may take 5 to 20 seconds</p>
                     
                     {/* Animated dots */}
-                    <div className="mt-4 flex items-center justify-center space-x-2">
+                    <div className="mt-2 flex items-center justify-center space-x-2">
                       <div className="w-2 h-2 bg-vibrant-pink rounded-full animate-bounce"></div>
                       <div className="w-2 h-2 bg-vibrant-pink rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                       <div className="w-2 h-2 bg-vibrant-pink rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>

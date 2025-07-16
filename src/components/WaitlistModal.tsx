@@ -112,7 +112,10 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" 
+            onClick={handleClose}
+          />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -136,7 +139,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
                   </Dialog.Title>
                   <button
                     onClick={handleClose}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     <XMarkIcon className="h-5 w-5" />
                   </button>
