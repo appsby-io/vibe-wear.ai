@@ -38,6 +38,24 @@ interface ProductDisplayProps {
   onImageViewLarge?: () => void;
 }
 
+const LOADING_MESSAGES = [
+  'Doing some magic…',
+  'Stitching pixels together…',
+  'Reading your vibe…',
+  'Consulting the AI muse…',
+  'Mocking up the masterpiece…',
+  'Wrapping it in drip…',
+  'Thinking in cotton…',
+  'Sharpening the outlines…',
+  'Polishing the pixels…',
+  'Locking in the look…',
+  'Giving main character energy…',
+  'Injecting certified drip…',
+  'Manifesting your fit…',
+  'Calling in the style gods…',
+  'Making it lowkey fire…'
+];
+
 export const ProductDisplay: React.FC<ProductDisplayProps> = ({
   designs,
   currentDesignIndex,
@@ -51,11 +69,29 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
 
   // Reset imageLoaded when design changes
   useEffect(() => {
     setImageLoaded(false);
   }, [currentDesignIndex, designs]);
+
+  // Rotate loading messages when generating
+  useEffect(() => {
+    if (isGenerating) {
+      // Set initial random message
+      const randomIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
+      setLoadingMessage(LOADING_MESSAGES[randomIndex]);
+
+      // Change message every 3 seconds
+      const interval = setInterval(() => {
+        const newIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
+        setLoadingMessage(LOADING_MESSAGES[newIndex]);
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating]);
 
   const handlePrevious = () => {
     const newIndex = currentDesignIndex === 0 ? designs.length - 1 : currentDesignIndex - 1;
@@ -199,7 +235,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                       </div>
                     </div>
                     
-                    <p className="text-gray-700 font-semibold font-source-sans text-lg">Creating Design...</p>
+                    <p className="text-gray-700 font-semibold font-source-sans text-lg">{loadingMessage}</p>
                     <p className="text-gray-500 font-source-sans text-sm mt-2">Using advanced AI • This may take 15-45 seconds</p>
                     
                     {/* Animated dots */}
