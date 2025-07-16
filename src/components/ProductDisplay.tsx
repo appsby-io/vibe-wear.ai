@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Eye, Search, ExternalLink } from 'lucide-rea
 import { DesignAnalysis } from './DesignAnalysis';
 import { ImageModal } from './ImageModal';
 import { LottieLoadingAnimation } from './LottieLoadingAnimation';
+import { ParticleText } from './ParticleText';
 import { ga } from '../lib/ga';
 import PremiumCottonTee from '../assets/premium_cotton_tee.jpg';
 import PremiumCottonSweatshirt from '../assets/premium_cotton_sweatshirt.jpg';
@@ -235,7 +236,11 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                       </div>
                     </div>
                     
-                    <p className="text-gray-700 font-semibold font-source-sans text-lg">{loadingMessage}</p>
+                    <ParticleText 
+                      text={loadingMessage} 
+                      className="text-gray-700 font-semibold font-source-sans text-lg"
+                      duration={600}
+                    />
                     <p className="text-gray-500 font-source-sans text-sm mt-2">Using advanced AI • This may take 15-45 seconds</p>
                     
                     {/* Animated dots */}
