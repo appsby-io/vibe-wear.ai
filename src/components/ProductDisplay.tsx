@@ -84,11 +84,11 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
       const randomIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
       setLoadingMessage(LOADING_MESSAGES[randomIndex]);
 
-      // Change message every 3 seconds
+      // Change message every 4 seconds
       const interval = setInterval(() => {
         const newIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
         setLoadingMessage(LOADING_MESSAGES[newIndex]);
-      }, 3000);
+      }, 4000);
 
       return () => clearInterval(interval);
     }
@@ -241,7 +241,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                       className="text-gray-700 font-semibold font-source-sans text-lg"
                       duration={1200}
                     />
-                    <p className="text-gray-500 font-source-sans text-sm mt-2">Using advanced AI • This may take 15-45 seconds</p>
+                    <p className="text-gray-500 font-source-sans text-sm mt-2">Using advanced AI • This may take 5 to 20 seconds</p>
                     
                     {/* Animated dots */}
                     <div className="mt-4 flex items-center justify-center space-x-2">
