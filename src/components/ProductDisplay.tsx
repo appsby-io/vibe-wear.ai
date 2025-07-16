@@ -72,10 +72,21 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
 
-  // Reset imageLoaded when design changes
+  // Get current design early for use in effects
+  const currentDesign = designs[currentDesignIndex];
+
+  // Reset imageLoaded when switching between existing designs
   useEffect(() => {
     setImageLoaded(false);
-  }, [currentDesignIndex, designs]);
+    // Check if image is already cached/loaded
+    if (currentDesign && currentDesign.imageUrl && currentDesign.id !== 'default') {
+      const img = new Image();
+      img.src = currentDesign.imageUrl;
+      if (img.complete) {
+        setImageLoaded(true);
+      }
+    }
+  }, [currentDesignIndex, currentDesign]);
 
   // Rotate loading messages when generating
   useEffect(() => {
@@ -140,7 +151,6 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
     }
   };
 
-  const currentDesign = designs[currentDesignIndex];
   const showSlider = designs.length >= 2;
   
   // Always show design if available and not generating
@@ -220,6 +230,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                     className="object-contain hover:scale-105 transition-transform w-[120px] h-[120px] lg:w-[160px] lg:h-[160px]"
                     draggable={false}
                     onLoad={() => setImageLoaded(true)}
+                    onError={() => setImageLoaded(true)} // Show image even on error
                     onContextMenu={(e) => e.preventDefault()} // Prevent right-click context menu
                   />
                 </div>
