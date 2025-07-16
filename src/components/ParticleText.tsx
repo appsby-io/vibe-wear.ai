@@ -103,8 +103,8 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
           particles.push({
             x: x / dpr, // Convert to logical coordinates
             y: y / dpr,
-            vx: (Math.random() - 0.5) * 2, // Reduced velocity for slower explosion
-            vy: (Math.random() - 0.5) * 2 - 0.5, // Slight upward bias
+            vx: (Math.random() - 0.5) * 1.2, // Further reduced velocity for slower explosion
+            vy: (Math.random() - 0.5) * 1.2 - 0.3, // Slight upward bias
             alpha: alpha / 255,
             color: '#000000', // black
           });
@@ -136,16 +136,17 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
           ? 2 * progress * progress
           : 1 - Math.pow(-2 * progress + 2, 2) / 2;
         
-        const newX = particle.x + particle.vx * easedProgress * 60;
-        const newY = particle.y + particle.vy * easedProgress * 60;
+        const newX = particle.x + particle.vx * easedProgress * 30; // Reduced from 60 to 30 for slower movement
+        const newY = particle.y + particle.vy * easedProgress * 30;
         
         // Calculate distance from center for edge fading
         const distFromCenter = Math.sqrt(
           Math.pow(newX - centerX, 2) + Math.pow(newY - centerY, 2)
         );
         
-        // Edge fade factor (fade out particles near edges)
-        const edgeFade = 1 - Math.pow(Math.max(0, distFromCenter - maxDistance * 0.5) / (maxDistance * 0.5), 2);
+        // Edge fade factor (fade out particles earlier - start fading at 30% from center)
+        const fadeStartDistance = maxDistance * 0.3; // Start fading much earlier
+        const edgeFade = 1 - Math.pow(Math.max(0, distFromCenter - fadeStartDistance) / (maxDistance - fadeStartDistance), 2);
         
         // Update alpha with edge fading
         const baseAlpha = particle.alpha * (1 - easedProgress);

@@ -95,11 +95,11 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
       const randomIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
       setLoadingMessage(LOADING_MESSAGES[randomIndex]);
 
-      // Change message every 4 seconds
+      // Change message every 5 seconds
       const interval = setInterval(() => {
         const newIndex = Math.floor(Math.random() * LOADING_MESSAGES.length);
         setLoadingMessage(LOADING_MESSAGES[newIndex]);
-      }, 4000);
+      }, 5000);
 
       return () => clearInterval(interval);
     }
