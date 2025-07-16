@@ -39,17 +39,17 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     ctx.font = 'bold 18px "Source Sans Pro", sans-serif';
     const metrics = ctx.measureText(displayText);
     
-    // Add padding
-    const padding = 40;
+    // Add extra padding to prevent cutoff
+    const padding = 120;
     canvas.width = metrics.width + padding * 2;
-    canvas.height = 50;
+    canvas.height = 100;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Render text
     ctx.font = 'bold 18px "Source Sans Pro", sans-serif';
-    ctx.fillStyle = '#374151'; // text-gray-700
+    ctx.fillStyle = '#000000'; // black
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(displayText, canvas.width / 2, canvas.height / 2);
@@ -67,20 +67,20 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     const pixels = imageData.data;
     const particles: Particle[] = [];
 
-    // Sample pixels to create particles (every 2 pixels for performance)
-    for (let y = 0; y < canvas.height; y += 2) {
-      for (let x = 0; x < canvas.width; x += 2) {
+    // Sample pixels to create particles (every pixel for more particles)
+    for (let y = 0; y < canvas.height; y += 1) {
+      for (let x = 0; x < canvas.width; x += 1) {
         const index = (y * canvas.width + x) * 4;
         const alpha = pixels[index + 3];
         
-        if (alpha > 128) { // Only create particles for more opaque pixels
+        if (alpha > 50) { // Lower threshold for more particles
           particles.push({
             x,
             y,
-            vx: (Math.random() - 0.5) * 4, // Increased velocity spread
-            vy: (Math.random() - 0.5) * 4 - 1, // More upward bias
+            vx: (Math.random() - 0.5) * 2, // Reduced velocity for slower explosion
+            vy: (Math.random() - 0.5) * 2 - 0.5, // Slight upward bias
             alpha: 1,
-            color: `rgba(55, 65, 81, ${alpha / 255})`, // text-gray-700 with original alpha
+            color: `rgba(0, 0, 0, ${alpha / 255})`, // black with original alpha
           });
         }
       }
@@ -100,19 +100,22 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
 
       // Update and draw particles
       particlesRef.current.forEach((particle) => {
-        // Update position with easing
-        const easedProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
-        particle.x += particle.vx * easedProgress * 3;
-        particle.y += particle.vy * easedProgress * 3;
+        // Update position with ease-in-out
+        const easedProgress = progress < 0.5
+          ? 2 * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
         
-        // Update alpha (fade out) with more dramatic fade
-        particle.alpha = Math.pow(1 - progress, 2);
+        particle.x += particle.vx * easedProgress * 2;
+        particle.y += particle.vy * easedProgress * 2;
+        
+        // Update alpha (fade out) more gradually
+        particle.alpha = 1 - easedProgress;
 
-        // Draw particle as small circle
+        // Draw particle as smaller circle
         ctx.globalAlpha = particle.alpha;
         ctx.fillStyle = particle.color;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, 1.5, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, 0.5, 0, Math.PI * 2);
         ctx.fill();
       });
 
@@ -166,7 +169,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
       <canvas
         ref={canvasRef}
         className="block"
-        style={{ minHeight: '50px' }}
+        style={{ minHeight: '100px' }}
       />
     </div>
   );

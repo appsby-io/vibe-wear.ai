@@ -239,7 +239,7 @@ export const ProductDisplay: React.FC<ProductDisplayProps> = ({
                     <ParticleText 
                       text={loadingMessage} 
                       className="text-gray-700 font-semibold font-source-sans text-lg"
-                      duration={600}
+                      duration={1200}
                     />
                     <p className="text-gray-500 font-source-sans text-sm mt-2">Using advanced AI • This may take 15-45 seconds</p>
                     
