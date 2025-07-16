@@ -180,7 +180,7 @@ export async function generateDesign(
   prompt: string,
   style: string,
   productColor: string,
-  quality: 'low' | 'hd' = 'low',
+  quality: 'low' | 'medium' | 'hd' = 'medium',
   referenceImage?: string
 ): Promise<GenerationResult> {
   let imageAnalysis: string | null = null;
@@ -231,7 +231,7 @@ export async function generateDesign(
       },
       body: JSON.stringify({
         prompt: enhancedPrompt,
-        quality: quality === 'hd' ? 'hd' : 'standard',
+        quality: quality === 'hd' ? 'high' : quality === 'low' ? 'low' : 'medium',
         size: "1024x1024"
         // Note: Not sending referenceImage to avoid payload size issues
         // OpenAI doesn't support reference images anyway
